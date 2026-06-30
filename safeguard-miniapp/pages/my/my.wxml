@@ -1,0 +1,112 @@
+<!-- ============================================
+   SafeGuard 智感 — 我的页面
+   ============================================ -->
+<view class="page-container">
+  
+  <!-- 用户信息头 -->
+  <view class="px-32 py-24">
+    <view class="card flex items-center gap-20">
+      <view style="width:80rpx;height:80rpx;border-radius:50%;background:linear-gradient(135deg,#4ade80,#22c55e);display:flex;align-items:center;justify-content:center;font-size:36rpx;flex-shrink:0;">🛡</view>
+      <view class="flex-1">
+        <view class="text-lg font-semibold mb-4">SafeGuard 用户</view>
+        <view class="text-xs text-secondary">Embora 智感系列 · 守护家人安全</view>
+      </view>
+      <text class="text-muted">→</text>
+    </view>
+  </view>
+
+  <!-- 预约记录 -->
+  <view class="px-32">
+    <view class="card">
+      <view class="flex-between mb-16">
+        <text class="text-base font-semibold">早鸟预约</text>
+        <view class="tag tag-accent">已预约</view>
+      </view>
+      <view class="text-sm text-secondary">您已成功预约 SafeGuard 早鸟名额</view>
+      <view class="text-xs text-muted mt-8">预计发货时间：产品测试完成后通知</view>
+    </view>
+  </view>
+
+  <view class="divider mt-24"></view>
+
+  <!-- 功能菜单 -->
+  <view class="px-32 py-24">
+    <view class="text-xs text-muted mb-16" style="letter-spacing:2rpx;">功能</view>
+    
+    <view class="flex-col">
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="orders">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">📦</text>
+          <text class="text-base">我的订单</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="alerts">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">🔔</text>
+          <text class="text-base">告警推送设置</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="share">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">💚</text>
+          <text class="text-base">分享给家人</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="divider"></view>
+
+  <!-- 更多 -->
+  <view class="px-32 py-24">
+    <view class="text-xs text-muted mb-16" style="letter-spacing:2rpx;">更多</view>
+    
+    <view class="flex-col">
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="about">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">ℹ️</text>
+          <text class="text-base">关于 SafeGuard</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="help">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">📖</text>
+          <text class="text-base">使用帮助</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex-between items-center mb-12" bindtap="onMenuTap" data-type="feedback">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">💬</text>
+          <text class="text-base">意见反馈</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex-between items-center" bindtap="onMenuTap" data-type="github">
+        <view class="flex items-center gap-12">
+          <text style="font-size:32rpx;">⭐</text>
+          <text class="text-base">GitHub 开源社区</text>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Embora 品牌 -->
+  <view class="px-32 py-24 text-center">
+    <view class="text-xs text-muted mb-8">Embora · 智感系列</view>
+    <view class="text-xs text-muted">本地AI隐私传感器 · 开源硬件 · 隐私优先</view>
+    <view class="text-xs text-muted mt-8">v1.0.0-beta</view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/device/device",
+    "pages/my/my",
+    "pages/product-detail/product-detail",
+    "pages/webview/webview"
+  ],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "SafeGuard 智感",
+    "navigationBarBackgroundColor": "#0a0a0a",
+    "backgroundColor": "#0a0a0a",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#6b6b68",
+    "selectedColor": "#4ade80",
+    "backgroundColor": "#111111",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "发现",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/device/device",
+        "text": "设备",
+        "iconPath": "images/tab-device.png",
+        "selectedIconPath": "images/tab-device-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "images/tab-my.png",
+        "selectedIconPath": "images/tab-my-active.png"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

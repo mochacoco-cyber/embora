@@ -1,0 +1,222 @@
+<!-- ============================================
+   SafeGuard 智感 — 首页
+   产品展示 + 功能亮点 + 早鸟预约
+   ============================================ -->
+<view class="page-container">
+  
+  <!-- Hero 区 -->
+  <view class="hero-section gradient-bg">
+    <view class="hero-badge">
+      <view class="glow-dot"></view>
+      <text class="text-accent text-xs" style="letter-spacing:2rpx;">Embora 智感系列 · 首款产品</text>
+    </view>
+
+    <view class="hero-title">
+      <text>SafeGuard</text>
+    </view>
+    <view class="hero-title" style="margin-top:-8rpx;">
+      <text>不用摄像头</text>
+      <text style="color:#4ade80;font-style:italic;">也能守护</text>
+      <text>家人</text>
+    </view>
+
+    <view class="hero-desc">
+      基于毫米波雷达与TinyML边缘AI，无需摄像头、不联网、不上传数据，实现精准跌倒检测与人在感知。
+    </view>
+    <view class="hero-desc-cn">
+      数据从不出设备。隐私，是最高级的安全感。
+    </view>
+
+    <view class="flex gap-16" style="justify-content:center;">
+      <button class="btn btn-primary" bindtap="onReserveTap">⚡ 早鸟预约 ¥199</button>
+      <button class="btn btn-outline" bindtap="onLearnMore">了解更多</button>
+    </view>
+  </view>
+
+  <!-- 核心卖点：三大场景 -->
+  <view class="px-32 py-24">
+    <view class="text-center mb-24">
+      <text class="text-xs" style="color:#4ade80;letter-spacing:2rpx;">USE SCENARIOS</text>
+      <view class="text-2xl font-semibold mt-8">一个设备，多重守护</view>
+    </view>
+
+    <view class="flex-col gap-16">
+      <view class="card card-tap flex gap-20 items-center" bindtap="onScenarioTap" data-scene="elder">
+        <view style="font-size:52rpx;">👴</view>
+        <view class="flex-1">
+          <view class="text-lg font-semibold mb-8">独居老人家庭</view>
+          <view class="text-sm text-secondary">卫生间、卧室跌倒检测，自动告警子女手机。无摄像头，老人不抗拒。</view>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex gap-20 items-center" bindtap="onScenarioTap" data-scene="baby">
+        <view style="font-size:52rpx;">👶</view>
+        <view class="flex-1">
+          <view class="text-lg font-semibold mb-8">婴幼儿看护</view>
+          <view class="text-sm text-secondary">检测宝宝是否在床、异常静止。不装摄像头，不怕黑客入侵。</view>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+
+      <view class="card card-tap flex gap-20 items-center" bindtap="onScenarioTap" data-scene="smart">
+        <view style="font-size:52rpx;">🏠</view>
+        <view class="flex-1">
+          <view class="text-lg font-semibold mb-8">全屋智能联动</view>
+          <view class="text-sm text-secondary">精准人在感知，坐着看书、躺着睡觉都能检测，告别红外误触发。</view>
+        </view>
+        <text class="text-muted">→</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="divider"></view>
+
+  <!-- 核心功能卡片 -->
+  <view class="px-32 py-24">
+    <view class="text-center mb-24">
+      <text class="text-xs" style="color:#4ade80;letter-spacing:2rpx;">CORE FEATURES</text>
+      <view class="text-2xl font-semibold mt-8">六个理由，选择 SafeGuard</view>
+    </view>
+
+    <view class="feature-grid">
+      <view class="feature-card-item">
+        <view class="feature-icon feature-icon-green">🫀</view>
+        <view class="text-base font-semibold mb-4">AI 跌倒检测</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">毫米波+TinyML本地推理，准确率超95%</view>
+      </view>
+      <view class="feature-card-item">
+        <view class="feature-icon feature-icon-blue">👁</view>
+        <view class="text-base font-semibold mb-4">精准人在感知</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">检测静止人体呼吸微动，告别误触发</view>
+      </view>
+      <view class="feature-card-item">
+        <view class="feature-icon feature-icon-purple">🔒</view>
+        <view class="text-base font-semibold mb-4">隐私零泄露</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">数据不出设备，代码开源可审计</view>
+      </view>
+      <view class="feature-card-item">
+        <view class="feature-icon feature-icon-amber">⚡</view>
+        <view class="text-base font-semibold mb-4">不依赖云端</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">断网也能用，不需月费订阅</view>
+      </view>
+      <view class="feature-card-item">
+        <view class="feature-icon" style="background:rgba(244,114,182,0.1);">🔌</view>
+        <view class="text-base font-semibold mb-4">开箱即用</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">USB-C供电，3分钟完成设置</view>
+      </view>
+      <view class="feature-card-item">
+        <view class="feature-icon" style="background:rgba(168,200,232,0.1);">🔧</view>
+        <view class="text-base font-semibold mb-4">开源 & 开放</view>
+        <view class="text-xs text-secondary" style="line-height:1.6;">MIT协议，接入任意智能家居平台</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="divider"></view>
+
+  <!-- 技术原理简版 -->
+  <view class="px-32 py-24">
+    <view class="text-center mb-24">
+      <text class="text-xs" style="color:#4ade80;letter-spacing:2rpx;">HOW IT WORKS</text>
+      <view class="text-2xl font-semibold mt-8">一颗芯片里的 AI 大脑</view>
+    </view>
+
+    <view class="flex-col gap-12">
+      <view class="card flex gap-16 items-center">
+        <view style="width:56rpx;height:56rpx;border-radius:50%;background:rgba(74,222,128,0.08);display:flex;align-items:center;justify-content:center;font-size:22rpx;color:#4ade80;flex-shrink:0;">1</view>
+        <view class="flex-1">
+          <view class="text-base font-semibold mb-4">毫米波感知</view>
+          <view class="text-xs text-secondary">24GHz雷达捕捉人体微动与姿态，不受光线温度影响</view>
+        </view>
+      </view>
+      <view class="card flex gap-16 items-center">
+        <view style="width:56rpx;height:56rpx;border-radius:50%;background:rgba(74,222,128,0.08);display:flex;align-items:center;justify-content:center;font-size:22rpx;color:#4ade80;flex-shrink:0;">2</view>
+        <view class="flex-1">
+          <view class="text-base font-semibold mb-4">特征提取</view>
+          <view class="text-xs text-secondary">ESP32-S3实时处理雷达数据，提取三维点云特征</view>
+        </view>
+      </view>
+      <view class="card flex gap-16 items-center">
+        <view style="width:56rpx;height:56rpx;border-radius:50%;background:rgba(74,222,128,0.08);display:flex;align-items:center;justify-content:center;font-size:22rpx;color:#4ade80;flex-shrink:0;">3</view>
+        <view class="flex-1">
+          <view class="text-base font-semibold mb-4">TinyML 推理</view>
+          <view class="text-xs text-secondary">量化AI模型(&lt;100KB)芯片上运行，50ms完成分类</view>
+        </view>
+      </view>
+      <view class="card flex gap-16 items-center">
+        <view style="width:56rpx;height:56rpx;border-radius:50%;background:rgba(74,222,128,0.08);display:flex;align-items:center;justify-content:center;font-size:22rpx;color:#4ade80;flex-shrink:0;">4</view>
+        <view class="flex-1">
+          <view class="text-base font-semibold mb-4">即时告警</view>
+          <view class="text-xs text-secondary">WiFi推送手机通知 + 本地蜂鸣器，双重保障</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 早鸟预约 CTA -->
+  <view class="px-32 py-24" style="background:linear-gradient(180deg,transparent,rgba(74,222,128,0.04));">
+    <view class="text-center">
+      <view class="text-3xl font-semibold mb-8">¥199</view>
+      <view class="text-sm text-secondary mb-8">早鸟价 / 预计零售价 ¥299</view>
+      <view class="text-base text-secondary mb-24">SafeGuard 正在最后测试阶段<br>留下联系方式，第一时间获取早鸟优惠</view>
+      <button class="btn btn-primary" style="width:100%;" bindtap="onReserveTap">📩 预约早鸟名额</button>
+    </view>
+  </view>
+
+  <!-- 预约弹窗 -->
+  <view class="modal-overlay" wx:if="{{showReserveModal}}" bindtap="onModalClose">
+    <view class="modal-sheet" catchtap="noop">
+      <view class="modal-handle"></view>
+      <view class="text-xl font-semibold mb-8 text-center">早鸟预约</view>
+      <view class="text-sm text-secondary mb-24 text-center">留下联系方式，发布时第一时间通知您</view>
+
+      <view class="flex-col gap-16">
+        <view>
+          <view class="text-sm text-secondary mb-8">姓名</view>
+          <input class="card" style="padding:24rpx;" placeholder="请输入您的称呼" placeholder-style="color:#6b6b68;" value="{{formName}}" bindinput="onNameInput" />
+        </view>
+        <view>
+          <view class="text-sm text-secondary mb-8">手机号</view>
+          <input class="card" style="padding:24rpx;" type="number" maxlength="11" placeholder="请输入手机号" placeholder-style="color:#6b6b68;" value="{{formPhone}}" bindinput="onPhoneInput" />
+        </view>
+        <view>
+          <view class="text-sm text-secondary mb-8">关注场景（可多选）</view>
+          <view class="flex gap-12" style="flex-wrap:wrap;">
+            <view 
+              class="tag {{formScenes.elder ? 'tag-accent' : ''}}" 
+              style="background:{{formScenes.elder ? '' : '#181818'}};border:1rpx solid rgba(255,255,255,0.06);"
+              bindtap="onSceneToggle"
+              data-key="elder"
+            >老人看护</view>
+            <view 
+              class="tag {{formScenes.baby ? 'tag-accent' : ''}}" 
+              style="background:{{formScenes.baby ? '' : '#181818'}};border:1rpx solid rgba(255,255,255,0.06);"
+              bindtap="onSceneToggle"
+              data-key="baby"
+            >婴儿看护</view>
+            <view 
+              class="tag {{formScenes.smart ? 'tag-accent' : ''}}" 
+              style="background:{{formScenes.smart ? '' : '#181818'}};border:1rpx solid rgba(255,255,255,0.06);"
+              bindtap="onSceneToggle"
+              data-key="smart"
+            >全屋智能</view>
+          </view>
+        </view>
+      </view>
+
+      <button 
+        class="btn btn-primary mt-24" 
+        style="width:100%;" 
+        bindtap="onSubmitReserve"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+      >{{submitting ? '提交中...' : '确认预约'}}</button>
+      
+      <view class="text-xs text-muted text-center mt-16">提交即表示同意接收产品信息，我们不会泄露您的个人信息</view>
+    </view>
+  </view>
+
+  <!-- 底部安全区 -->
+  <view class="safe-bottom"></view>
+</view>

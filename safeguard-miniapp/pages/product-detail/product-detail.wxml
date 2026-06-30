@@ -1,0 +1,69 @@
+<!-- ============================================
+   SafeGuard 智感 — 产品详情页
+   ============================================ -->
+<view class="page-container px-32 py-24">
+  
+  <view class="text-center mb-32">
+    <view style="font-size:80rpx;margin-bottom:16rpx;">🛡</view>
+    <view class="text-2xl font-bold mb-8">SafeGuard 智感</view>
+    <view class="text-sm text-secondary">Embora 智感系列 · 本地AI隐私传感器</view>
+  </view>
+
+  <view class="card mb-16">
+    <view class="text-base font-semibold mb-8">产品状态</view>
+    <view class="flex items-center gap-12 mb-16">
+      <view class="glow-dot"></view>
+      <text class="text-accent">测试阶段 · 即将发布</text>
+    </view>
+    <view class="text-sm text-secondary" style="line-height:1.7;">
+      SafeGuard 智感是 Embora 智感系列的首款产品。基于毫米波雷达与TinyML边缘AI技术，无需摄像头、不联网、不上传任何数据，即可实现精准跌倒检测和人在感知。
+    </view>
+  </view>
+
+  <view class="card mb-16">
+    <view class="text-base font-semibold mb-12">技术规格</view>
+    <view class="flex-col gap-12 text-sm">
+      <view class="flex-between">
+        <text class="text-secondary">芯片平台</text>
+        <text>ESP32-S3</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">雷达模块</text>
+        <text>LD2450 24GHz</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">AI推理</text>
+        <text>TinyML 本地</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">连接方式</text>
+        <text>WiFi 直连</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">供电</text>
+        <text>USB-C 5V</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">尺寸</text>
+        <text>⌀60 × 28mm</text>
+      </view>
+      <view class="flex-between">
+        <text class="text-secondary">开源协议</text>
+        <text>MIT</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card mb-16">
+    <view class="text-base font-semibold mb-8">价格</view>
+    <view class="flex items-center gap-16">
+      <text class="text-3xl font-bold text-accent">¥199</text>
+      <text class="text-sm text-secondary" style="text-decoration:line-through;">¥299</text>
+      <view class="tag tag-accent">早鸟价</view>
+    </view>
+  </view>
+
+  <button class="btn btn-primary mt-24" style="width:100%;" bindtap="onReserve">预约早鸟名额</button>
+
+  <view class="safe-bottom"></view>
+</view>

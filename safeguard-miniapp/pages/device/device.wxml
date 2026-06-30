@@ -1,0 +1,153 @@
+<!-- ============================================
+   SafeGuard 智感 — 设备页
+   设备列表 + 配网 + 告警记录
+   ============================================ -->
+<view class="page-container">
+  
+  <!-- 顶部统计条 -->
+  <view class="px-32 py-24">
+    <view class="card flex-between">
+      <view class="text-center flex-1">
+        <view class="text-3xl font-bold text-accent">{{devices.length}}</view>
+        <view class="text-xs text-secondary mt-8">在线设备</view>
+      </view>
+      <view style="width:1rpx;height:60rpx;background:rgba(255,255,255,0.06);"></view>
+      <view class="text-center flex-1">
+        <view class="text-3xl font-bold text-warning">{{unhandledAlerts}}</view>
+        <view class="text-xs text-secondary mt-8">未处理告警</view>
+      </view>
+      <view style="width:1rpx;height:60rpx;background:rgba(255,255,255,0.06);"></view>
+      <view class="text-center flex-1">
+        <view class="text-3xl font-bold" style="color:#a8a8a6;">{{todayAlerts}}</view>
+        <view class="text-xs text-secondary mt-8">今日告警</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备列表 -->
+  <view class="px-32">
+    <view class="flex-between mb-16">
+      <text class="text-lg font-semibold">我的设备</text>
+      <button class="btn btn-outline" style="padding:12rpx 24rpx;font-size:24rpx;" bindtap="onAddDevice">+ 添加设备</button>
+    </view>
+
+    <!-- 有设备 -->
+    <block wx:if="{{devices.length > 0}}">
+      <view wx:for="{{devices}}" wx:key="id" class="device-card {{item.online ? 'online' : ''}}">
+        <view class="flex-between mb-16">
+          <view class="flex items-center gap-12">
+            <view class="glow-dot {{item.online ? '' : ''}}" style="background:{{item.online ? '#4ade80' : '#6b6b68'}};box-shadow:{{item.online ? '0 0 12rpx rgba(74,222,128,0.4)' : 'none'}};"></view>
+            <view>
+              <view class="text-base font-semibold">{{item.name}}</view>
+              <view class="text-xs text-secondary">{{item.room}} · {{item.modeLabel}}</view>
+            </view>
+          </view>
+          <view class="text-xs" style="color:{{item.online ? '#4ade80' : '#6b6b68'}};">
+            {{item.online ? '在线' : '离线'}}
+          </view>
+        </view>
+
+        <view class="divider mb-16"></view>
+
+        <view class="flex-between text-xs">
+          <view class="flex-col gap-8">
+            <text class="text-secondary">固件</text>
+            <text>{{item.firmware}}</text>
+          </view>
+          <view class="flex-col gap-8">
+            <text class="text-secondary">电量</text>
+            <text class="{{item.battery < 20 ? 'text-danger' : ''}}">{{item.battery}}%</text>
+          </view>
+          <view class="flex-col gap-8">
+            <text class="text-secondary">24h告警</text>
+            <text class="{{item.alerts24h > 0 ? 'text-warning' : 'text-accent'}}">{{item.alerts24h}}次</text>
+          </view>
+          <view class="flex-col gap-8">
+            <text class="text-secondary">最后在线</text>
+            <text>{{item.lastSeenLabel}}</text>
+          </view>
+        </view>
+
+        <view class="flex gap-12 mt-16">
+          <button class="btn btn-outline flex-1" style="padding:16rpx;font-size:24rpx;" bindtap="onDeviceDetail" data-id="{{item.id}}">详情</button>
+          <button class="btn btn-outline flex-1" style="padding:16rpx;font-size:24rpx;" bindtap="onDeviceSettings" data-id="{{item.id}}">设置</button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 无设备 -->
+    <view wx:else class="empty-state">
+      <view class="empty-icon">📡</view>
+      <view class="empty-title">还没有设备</view>
+      <view class="empty-desc">点击上方按钮添加您的 SafeGuard 智感设备</view>
+    </view>
+  </view>
+
+  <view class="divider mt-24"></view>
+
+  <!-- 告警记录 -->
+  <view class="px-32 py-24">
+    <view class="flex-between mb-16">
+      <text class="text-lg font-semibold">告警记录</text>
+      <text class="text-xs text-muted" bindtap="onViewAllAlerts">查看全部 →</text>
+    </view>
+
+    <block wx:if="{{alerts.length > 0}}">
+      <view wx:for="{{alerts}}" wx:key="id" wx:if="{{index < 3}}" class="alert-item {{item.level}}">
+        <view class="alert-icon {{item.level}}">{{item.icon}}</view>
+        <view class="flex-1">
+          <view class="flex-between mb-4">
+            <text class="text-base font-semibold">{{item.title}}</text>
+            <text class="text-xs text-muted">{{item.timeLabel}}</text>
+          </view>
+          <view class="text-sm text-secondary mb-4">{{item.desc}}</view>
+          <view class="text-xs text-muted">{{item.deviceName}}</view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:else class="empty-state" style="padding:40rpx 0;">
+      <view class="empty-icon">✅</view>
+      <view class="empty-desc">暂无告警记录，一切安好</view>
+    </view>
+  </view>
+
+  <!-- 添加设备弹窗 -->
+  <view class="modal-overlay" wx:if="{{showPairModal}}" bindtap="onPairModalClose">
+    <view class="modal-sheet" catchtap="noop">
+      <view class="modal-handle"></view>
+      <view class="text-xl font-semibold mb-8 text-center">添加设备</view>
+      <view class="text-sm text-secondary mb-24 text-center">将 SafeGuard 智感设备连接到小程序</view>
+
+      <view class="flex-col gap-16">
+        <view class="card text-center py-24">
+          <view style="font-size:60rpx;margin-bottom:16rpx;">🔌</view>
+          <view class="text-base font-semibold mb-8">步骤一：设备通电</view>
+          <view class="text-sm text-secondary">使用 USB-C 线为 SafeGuard 供电<br>等待指示灯变为蓝色闪烁</view>
+        </view>
+
+        <view class="card text-center py-24">
+          <view style="font-size:60rpx;margin-bottom:16rpx;">📱</view>
+          <view class="text-base font-semibold mb-8">步骤二：连接设备热点</view>
+          <view class="text-sm text-secondary">打开手机WiFi设置<br>连接 "SafeGuard-XXXX" 热点</view>
+        </view>
+
+        <view class="card text-center py-24">
+          <view style="font-size:60rpx;margin-bottom:16rpx;">🏠</view>
+          <view class="text-base font-semibold mb-8">步骤三：配置WiFi</view>
+          <view class="text-sm text-secondary">返回小程序，自动完成WiFi配网<br>设备将连接到您的家庭网络</view>
+        </view>
+      </view>
+
+      <button 
+        class="btn btn-primary mt-24" 
+        style="width:100%;" 
+        bindtap="onStartPair"
+        loading="{{pairing}}"
+        disabled="{{pairing}}"
+      >{{pairing ? '配网中...' : '开始配网'}}</button>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>
