@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embora 智感 SafeGuard — 本地AI隐私传感器 | 不用摄像头也能守护家人</title>
+<meta name="description" content="Embora 旗下智感系列首款产品 SafeGuard，是一款本地AI隐私传感器。基于毫米波雷达与TinyML边缘AI，无需摄像头、不上传数据，实现跌倒检测与人在感知。">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+
+  :root {
+    --bg:              #0a0a0a;
+    --bg-elevated:     #121212;
+    --bg-card:         #181818;
+    --bg-card-hover:   #1f1f1f;
+    --fg:              #fafaf9;
+    --fg-secondary:    #a8a8a6;
+    --fg-muted:        #6b6b68;
+    /* 智感系列主题色 — 科技绿 */
+    --accent:          #4ade80;
+    --accent-soft:     rgba(74, 222, 128, 0.10);
+    --accent-glow:     rgba(74, 222, 128, 0.20);
+    /* Embora 母品牌色 — 暖棕金（用于品牌标识） */
+    --brand:           #d4a574;
+    --brand-soft:      rgba(212, 165, 116, 0.12);
+    --hairline:        rgba(255,255,255,0.05);
+    --hairline-strong: rgba(255,255,255,0.10);
+    --orb-mint:     rgba(74, 222, 128, 0.16);
+    --orb-sky:      rgba(56, 189, 248, 0.13);
+    --orb-lavender: rgba(139, 92, 246, 0.10);
+    --font-display: 'EB Garamond', 'Times New Roman', 'Noto Serif SC', serif;
+    --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10, 10, 10, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .nav-logo .brand-mark {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--brand);
+    letter-spacing: 0.5px;
+  }
+
+  .nav-logo .logo-sep {
+    width: 1px; height: 16px;
+    background: var(--hairline-strong);
+    margin: 0 6px;
+  }
+
+  .nav-logo .series-name {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+  }
+
+  .nav-logo .product-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 30px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--fg); }
+
+  .nav-cta {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bg) !important;
+    background: var(--accent);
+    padding: 8px 20px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+  }
+
+  .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 128px 48px 96px;
+    overflow: hidden;
+  }
+
+  .hero .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    animation: orbFloat 14s ease-in-out infinite;
+  }
+  .hero .orb-1 {
+    width: 550px; height: 550px;
+    background: var(--orb-mint);
+    top: -15%; left: -8%;
+    animation-delay: 0s;
+  }
+  .hero .orb-2 {
+    width: 420px; height: 420px;
+    background: var(--orb-sky);
+    top: 25%; right: -10%;
+    animation-delay: -5s;
+  }
+  .hero .orb-3 {
+    width: 360px; height: 360px;
+    background: var(--orb-lavender);
+    bottom: -8%; left: 25%;
+    animation-delay: -9s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(25px, -35px) scale(1.06); }
+    66% { transform: translate(-18px, 22px) scale(0.94); }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(74, 222, 128, 0.18);
+    border-radius: 9999px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+
+  .hero-badge span {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.96px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .hero-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-glow); }
+    50% { opacity: 0.3; box-shadow: 0 0 2px var(--accent-glow); }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(38px, 6vw, 68px);
+    font-weight: 300;
+    line-height: 1.10;
+    letter-spacing: -1.5px;
+    color: var(--fg);
+    max-width: 860px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1s ease forwards 0.5s;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--fg-secondary);
+    max-width: 560px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+
+  .hero-sub.cn {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-style: italic;
+    color: var(--fg-muted);
+    margin-bottom: 40px;
+    animation: fadeUp 0.8s ease forwards 0.85s;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards 1.0s;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 13px 30px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: opacity 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px var(--accent-glow);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg);
+    background: transparent;
+    padding: 12px 28px;
+    border-radius: 9999px;
+    border: 1px solid var(--hairline-strong);
+    text-decoration: none;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .btn-outline:hover {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.6s;
+  }
+
+  .hero-scroll span {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--fg-muted), transparent);
+    animation: scrollPulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+    50% { opacity: 0.8; transform: scaleY(1); }
+  }
+
+  /* Section base */
+  .section { padding: 96px 0; position: relative; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
+    color: var(--fg);
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* Problem Section */
+  .problem {
+    border-top: 1px solid var(--hairline);
+    padding: 100px 0;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .problem-card {
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    padding: 36px 32px;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .problem-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--hairline-strong);
+  }
+
+  .problem-card .icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .problem-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+
+  .problem-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--fg-secondary);
+  }
+
+  /* Features */
+  .features {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    padding: 40px 32px;
+    transition: background 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--hairline-strong);
+    transform: translateY(-4px);
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .feature-card:hover::before { opacity: 0.5; }
+
+  .feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 24px;
+  }
+
+  .icon-fall   { background: rgba(74, 222, 128, 0.12); }
+  .icon-presence { background: rgba(56, 189, 248, 0.12); }
+  .icon-privacy  { background: rgba(139, 92, 246, 0.12); }
+  .icon-local    { background: rgba(251, 191, 36, 0.12); }
+  .icon-easy     { background: rgba(244, 114, 182, 0.12); }
+  .icon-open     { background: rgba(168, 200, 232, 0.12); }
+
+  .feature-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 6px;
+  }
+
+  .feature-card .cn-tag {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--fg-secondary);
+  }
+
+  /* How it works */
+  .how-it-works {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .step-card {
+    text-align: center;
+    padding: 32px 20px;
+  }
+
+  .step-number {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .step-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+
+  .step-card .cn {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--fg-muted);
+    margin-bottom: 10px;
+  }
+
+  .step-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--fg-secondary);
+  }
+
+  /* Specs */
+  .specs {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .specs-table {
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .spec-row {
+    display: flex;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .spec-row:last-child { border-bottom: none; }
+
+  .spec-label {
+    width: 200px;
+    flex-shrink: 0;
+    padding: 18px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg);
+    background: var(--bg-card);
+    border-right: 1px solid var(--hairline);
+  }
+
+  .spec-value {
+    flex: 1;
+    padding: 18px 24px;
+    font-size: 14px;
+    color: var(--fg-secondary);
+  }
+
+  .spec-value strong {
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  /* Scenarios */
+  .scenarios {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    padding: 36px 32px;
+    transition: background 0.4s ease, border-color 0.4s ease;
+  }
+
+  .scenario-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--hairline-strong);
+  }
+
+  .scenario-emoji {
+    font-size: 36px;
+    margin-bottom: 18px;
+  }
+
+  .scenario-card h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+
+  .scenario-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--fg-secondary);
+  }
+
+  /* CTA */
+  .cta-section {
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+    padding: 120px 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .cta-section .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+  }
+
+  .cta-section .orb-1 {
+    width: 420px; height: 420px;
+    background: var(--orb-mint);
+    top: -25%; left: 8%;
+  }
+
+  .cta-section .orb-2 {
+    width: 350px; height: 350px;
+    background: var(--orb-sky);
+    bottom: -20%; right: 10%;
+  }
+
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4.5vw, 50px);
+    font-weight: 300;
+    line-height: 1.12;
+    letter-spacing: -1px;
+    color: var(--fg);
+    margin-bottom: 16px;
+  }
+
+  .cta-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .cta-sub {
+    font-size: 16px;
+    color: var(--fg-secondary);
+    margin-bottom: 40px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .pricing-teaser {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    padding: 12px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--hairline);
+    border-radius: 9999px;
+  }
+
+  .pricing-teaser .price {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .pricing-teaser .label {
+    font-size: 14px;
+    color: var(--fg-secondary);
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--hairline);
+    padding: 64px 0 48px;
+  }
+
+  .footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-logo {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+
+  .footer-logo .logo-dot {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), #22c55e);
+  }
+
+  .footer-tagline {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--fg-muted);
+    max-width: 260px;
+    line-height: 1.5;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-col-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  .footer-col a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-col a:hover { color: var(--fg); }
+
+  .footer-bottom {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-size: 13px;
+    color: var(--fg-muted);
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-socials a {
+    font-size: 13px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-socials a:hover { color: var(--fg); }
+
+  /* Scroll Reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .features-grid,
+    .problem-grid,
+    .scenario-grid { grid-template-columns: 1fr 1fr; }
+    .how-steps { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .nav { padding: 0 20px; }
+    .nav-links .hide-mobile { display: none; }
+    .container { padding: 0 20px; }
+    .hero { padding: 100px 20px 80px; }
+    .hero-actions { flex-direction: column; width: 100%; }
+    .hero-actions a { width: 100%; justify-content: center; text-align: center; }
+    .features-grid,
+    .problem-grid,
+    .scenario-grid { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: 1fr; }
+    .spec-label { width: 120px; font-size: 13px; padding: 14px 16px; }
+    .spec-value { font-size: 13px; padding: 14px 16px; }
+    .footer .container { flex-direction: column; gap: 36px; }
+    .footer-bottom { flex-direction: column; gap: 14px; align-items: flex-start; }
+    .cta-actions { flex-direction: column; width: 100%; }
+    .cta-actions a { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="brand-mark">Embora</span>
+    <span class="logo-sep"></span>
+    <span class="series-name">智感</span>
+    <span class="product-dot"></span>
+  </a>
+  <ul class="nav-links">
+    <li class="hide-mobile"><a href="#problem">痛点</a></li>
+    <li class="hide-mobile"><a href="#features">功能</a></li>
+    <li class="hide-mobile"><a href="#how">原理</a></li>
+    <li class="hide-mobile"><a href="#specs">规格</a></li>
+    <li><a href="embora.html" style="color: var(--brand);">Embora 品牌</a></li>
+    <li><a href="#cta" class="nav-cta">预约购买</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-badge">
+    <div class="dot"></div>
+    <span>Embora 智感系列 · 首款产品</span>
+  </div>
+
+  <h1>SafeGuard<br><em>不用摄像头</em>也能守护家人</h1>
+
+  <p class="hero-sub">
+    SafeGuard 是 Embora 智感系列的首款产品——一款本地AI隐私传感器。
+    基于毫米波雷达与TinyML边缘AI，无需摄像头、不联网、不上传任何数据，
+    即可实现精准跌倒检测和人在感知。
+  </p>
+
+  <p class="hero-sub cn">
+    数据从不出设备。隐私，是最高级的安全感。
+  </p>
+
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">⚡ 抢先预约早鸟</a>
+    <a href="#features" class="btn-outline">了解全部功能 →</a>
+  </div>
+
+  <div class="hero-scroll">
+    <span>往下看</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- Brand Intro: Embora + 智感系列 -->
+<section class="section brand-intro" id="about" style="border-top: 1px solid var(--hairline); padding: 80px 0;">
+  <div class="container" style="text-align: center;">
+    <div class="reveal" style="max-width: 700px; margin: 0 auto;">
+      <p style="font-family: var(--font-body); font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--brand); margin-bottom: 20px;">Embora · 具身智能科技</p>
+      <p style="font-family: var(--font-display); font-size: 20px; font-weight: 300; font-style: italic; line-height: 1.6; color: var(--fg-secondary); margin-bottom: 12px;">
+        "让机器理解物理世界，在真实环境中感知、思考与行动。"
+      </p>
+      <p style="font-size: 15px; line-height: 1.7; color: var(--fg-muted); margin-bottom: 40px;">
+        Embora 致力于将 AI 从屏幕和云端带到物理世界。我们相信下一代的智能不应该依赖摄像头和云服务器
+        ——它应该在本地、在边缘、在你身边，悄无声息地守护，而不是监视。
+      </p>
+      <div style="display: flex; gap: 16px; align-items: center; justify-content: center;">
+        <div style="padding: 10px 20px; background: var(--bg-card); border: 1px solid var(--hairline); border-radius: 9999px;">
+          <span style="font-size: 14px; font-weight: 600; color: var(--accent);">智感系列</span>
+          <span style="font-size: 14px; color: var(--fg-secondary); margin-left: 6px;">本地AI感知</span>
+        </div>
+        <span style="color: var(--fg-muted); font-size: 14px;">未来更多系列 →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem Section -->
+<section class="section problem" id="problem">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">The Problem / 用户困境</p>
+      <h2 class="section-title">为什么你需要一个<em>不一样</em>的传感器？</h2>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="icon">📷</div>
+        <h3>摄像头 = 隐私焦虑</h3>
+        <p>38% 的消费者因担心隐私泄露拒绝使用智能家居。2025年央视3·15曝光超30万家庭智能设备数据遭泄露。在家装摄像头，你真的安心吗？</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="icon">😰</div>
+        <h3>跌倒，老人的头号威胁</h3>
+        <p>跌倒是65岁以上老人意外伤害死亡的首要原因。独居老人跌倒后若无人发现，每延迟1小时救援，死亡率上升10%。传统跌倒检测手环，老人常忘佩戴。</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="icon">🤯</div>
+        <h3>现有传感器不够聪明</h3>
+        <p>红外传感器检测不到静止的人；云端AI延迟高、断网就罢工；高端方案价格上千，还需专属网关和专业安装。中间地带，几乎是空的。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section features" id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">Core Features / 核心功能</p>
+      <h2 class="section-title">六个理由，选择<em>SafeGuard 智感</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon icon-fall">🫀</div>
+        <h3>AI 跌倒检测</h3>
+        <p class="cn-tag">毫米波 + TinyML</p>
+        <p>基于毫米波雷达点云数据，TinyML模型在本地实时推理，识别跌倒姿态准确率超95%。检测到跌倒后即时通过WiFi推送告警通知到子女手机。</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon icon-presence">👁</div>
+        <h3>精准人在感知</h3>
+        <p class="cn-tag">告别误触发</p>
+        <p>毫米波雷达可检测静止人体呼吸微动，真正区分"有人"与"无人"。再也不会半夜被误触发的灯光惊醒，也不会人还在房间灯就灭了。</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon icon-privacy">🔒</div>
+        <h3>隐私零泄露</h3>
+        <p class="cn-tag">数据不出设备</p>
+        <p>所有AI推理在ESP32芯片本地完成。没有摄像头、没有麦克风上传、没有云端存储。你的家庭数据，永远不离开这个房间。代码开源，可审计。</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon icon-local">⚡</div>
+        <h3>不依赖云端</h3>
+        <p class="cn-tag">断网也能用</p>
+        <p>所有AI模型运行在设备端。没有WiFi也能正常工作——检测到跌倒时通过本地蜂鸣器告警。不需要月费订阅，不需要专属网关。</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon icon-easy">🔌</div>
+        <h3>开箱即用</h3>
+        <p class="cn-tag">3分钟完成设置</p>
+        <p>USB-C供电，WiFi直连。手机扫码配网，预设场景模式。不需要钻孔布线，不需要专业安装。租房也能用，搬家直接带走。</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon icon-open">🔧</div>
+        <h3>开源 &amp; 开放</h3>
+        <p class="cn-tag">不锁定生态</p>
+        <p>固件开源（MIT协议），支持MQTT标准协议。可接入Home Assistant、米家（通过Matter）、Node-RED等任意平台。你的设备，你做主。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section how-it-works" id="how">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">How It Works / 技术原理</p>
+      <h2 class="section-title">一颗芯片里的<em>AI大脑</em></h2>
+    </div>
+    <div class="how-steps">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-number">1</div>
+        <h3>毫米波感知</h3>
+        <p class="cn">24GHz mmWave</p>
+        <p>发射毫米波并接收反射信号，捕捉人体微动、姿态和位置。不受光线温度影响。</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-number">2</div>
+        <h3>特征提取</h3>
+        <p class="cn">实时信号处理</p>
+        <p>ESP32-S3芯片实时处理雷达数据，提取人体目标三维点云特征。</p>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-number">3</div>
+        <h3>TinyML推理</h3>
+        <p class="cn">边缘AI计算</p>
+        <p>量化AI模型（&lt;100KB）在芯片上运行，50ms内完成跌倒/行为分类。无需网络、无需GPU。</p>
+      </div>
+      <div class="step-card reveal reveal-delay-4">
+        <div class="step-number">4</div>
+        <h3>即时告警</h3>
+        <p class="cn">WiFi / 蜂鸣器</p>
+        <p>检测到异常后WiFi推送手机通知，同时触发本地蜂鸣器。支持MQTT对接智能家居平台。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Scenarios -->
+<section class="section scenarios" id="scenarios">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">Use Scenarios / 应用场景</p>
+      <h2 class="section-title">一个设备，<em>多重守护</em></h2>
+    </div>
+    <div class="scenario-grid">
+      <div class="scenario-card reveal reveal-delay-1">
+        <div class="scenario-emoji">👴</div>
+        <h3>独居老人家庭</h3>
+        <p>安装在卫生间、卧室等跌倒高发区域。老人跌倒时自动告警子女手机。无摄像头设计，老人不抗拒——"这不是监控，是守护。"</p>
+      </div>
+      <div class="scenario-card reveal reveal-delay-2">
+        <div class="scenario-emoji">👶</div>
+        <h3>婴幼儿看护</h3>
+        <p>放在婴儿房，检测宝宝是否在床、是否异常静止。不需要在宝宝房间装摄像头，不用担心婴儿监视器被黑客入侵。</p>
+      </div>
+      <div class="scenario-card reveal reveal-delay-3">
+        <div class="scenario-emoji">🏠</div>
+        <h3>全屋智能联动</h3>
+        <p>人在传感器模式：检测到房间无人自动关灯关空调；有人进入自动开启。比红外传感器更精准——坐着看书、躺着睡觉都能检测。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Specs -->
+<section class="section specs" id="specs">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">Specifications / 产品规格</p>
+      <h2 class="section-title">小而强大</h2>
+    </div>
+    <div class="specs-table reveal reveal-delay-1">
+      <div class="spec-row">
+        <div class="spec-label">芯片平台</div>
+        <div class="spec-value"><strong>ESP32-S3</strong> — 双核 Xtensa LX7 @240MHz，512KB SRAM + 8MB PSRAM，WiFi 4 + BLE 5.0</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">雷达模块</div>
+        <div class="spec-value"><strong>LD2450 24GHz 毫米波</strong> — 多目标跟踪（最多3人），检测距离0.5-6m，角度±60°</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">AI 能力</div>
+        <div class="spec-value"><strong>TinyML 本地推理</strong> — 跌倒检测、人在感知、行为分类，模型 &lt;100KB，推理 &lt;50ms</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">隐私保护</div>
+        <div class="spec-value"><strong>零云端依赖</strong> — 无摄像头、无麦克风上传、无数据存储。所有推理在芯片本地完成</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">连接方式</div>
+        <div class="spec-value"><strong>WiFi 802.11n</strong> — 直连路由器，无需网关。支持 MQTT 协议对接 Home Assistant / Node-RED</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">供电 &amp; 功耗</div>
+        <div class="spec-value"><strong>USB-C 5V</strong> — 典型功耗 &lt;1W。支持移动电源供电，断电场景可用</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">尺寸 &amp; 安装</div>
+        <div class="spec-value"><strong>⌀60 × 28mm</strong> — 壁挂/吸顶/桌面放置。3M胶贴或螺丝固定，无需布线</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">固件 &amp; 协议</div>
+        <div class="spec-value"><strong>开源 MIT 协议</strong> — GitHub 托管。ESP-IDF 框架。支持 OTA 固件升级</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container cta-inner reveal">
+    <p class="section-label">Embora 智感系列 · Coming Soon</p>
+    <h2 class="cta-title">隐私，是最高级的<em>安全感</em></h2>
+    <p class="cta-sub">
+      SafeGuard 是 Embora 智感系列的首款产品，正在最后测试阶段。<br>
+      留下邮箱，第一时间获取发布通知和<strong>早鸟优惠</strong>。
+    </p>
+    <div class="pricing-teaser">
+      <span class="price">¥199</span>
+      <span class="label">早鸟价 / 预计零售价 ¥299</span>
+    </div>
+    <div style="margin-top: 28px;" class="cta-actions">
+      <a href="mailto:hello@embora.ai" class="btn-primary">📩 预约早鸟名额</a>
+      <a href="https://github.com/mochacoco-cyber/embora" target="_blank" class="btn-outline">⭐ GitHub 开源预览</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-brand">
+      <span class="footer-logo">
+        <span style="color: var(--brand); font-weight: 600;">Embora</span>
+        <span style="color: var(--fg-muted); margin: 0 6px;">·</span>
+        <span style="color: var(--accent); font-weight: 500;">智感</span>
+      </span>
+      <span class="footer-tagline">Embora 智感系列首款产品 SafeGuard。<br>本地AI隐私传感器，不联网也能守护家人。</span>
+    </div>
+    <div style="display: flex; gap: 64px;">
+      <div class="footer-col">
+        <span class="footer-col-title">Embora 智感</span>
+        <a href="#features">SafeGuard 功能</a>
+        <a href="#specs">技术规格</a>
+        <a href="#how">工作原理</a>
+        <a href="#cta">预约购买</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Embora 品牌</span>
+        <a href="https://github.com/mochacoco-cyber/embora" target="_blank">GitHub</a>
+        <a href="embora.html">品牌主页</a>
+        <a href="#">未来产品</a>
+        <a href="mailto:hello@embora.ai">联系我们</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span class="footer-copy">&copy; 2026 Embora. 智感系列 · SafeGuard · 开源硬件 · 隐私优先 · 本地AI</span>
+    <div class="footer-socials">
+      <a href="https://github.com/mochacoco-cyber/embora" target="_blank">GitHub</a>
+      <a href="#">B站</a>
+      <a href="#">知乎</a>
+      <a href="mailto:hello@embora.ai">Email</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
