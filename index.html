@@ -3,1094 +3,403 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Embora — Embodied Intelligence for the Real World</title>
-<meta name="description" content="Embora 是一家致力于具身智能与通用人工智能的科技公司。我们让机器理解物理世界，在真实环境中感知、思考与行动。">
+<title>Embora — Embodied Intelligence</title>
+<meta name="description" content="Embora 构建理解物理世界的具身智能。让机器在真实环境中感知、思考与行动。">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
-  *, *::before, *::after {
-    margin: 0; padding: 0; box-sizing: border-box;
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#090807;--fg:#f5f0ea;--fg2:#9e9892;--fg3:#5e5852;
+    --accent:#c8966a;--accent-soft:rgba(200,150,106,0.10);
+    --hairline:rgba(255,255,255,0.06);--hairline-strong:rgba(255,255,255,0.10);
+    --orb-mint:rgba(167,229,211,0.22);--orb-peach:rgba(244,197,168,0.18);
+    --orb-lavender:rgba(200,184,224,0.18);--orb-sky:rgba(168,200,232,0.18);
+    --orb-rose:rgba(232,184,196,0.15);
+    --font-display:'EB Garamond','Times New Roman',serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  body{
+    background:var(--bg);color:var(--fg);font-family:var(--font-body);
+    font-size:16px;font-weight:400;line-height:1.5;letter-spacing:0.16px;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;
+  }
+  .noise{
+    position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.025;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:256px 256px;
   }
 
-  :root {
-    /* Dark variant of ElevenLabs palette */
-    --bg:              #0a0908;
-    --bg-elevated:     #141210;
-    --bg-card:         #1a1816;
-    --bg-card-hover:   #1f1d1a;
-    --fg:              #f5f0eb;
-    --fg-secondary:    #a8a29e;
-    --fg-muted:        #6b6560;
-    --accent:          #d4a574;
-    --accent-soft:     rgba(212, 165, 116, 0.12);
-    --hairline:        rgba(255,255,255,0.06);
-    --hairline-strong: rgba(255,255,255,0.1);
-    /* Gradient orbs — ElevenLabs pastels adapted for dark */
-    --orb-mint:     rgba(167, 229, 211, 0.25);
-    --orb-peach:    rgba(244, 197, 168, 0.2);
-    --orb-lavender: rgba(200, 184, 224, 0.2);
-    --orb-sky:      rgba(168, 200, 232, 0.2);
-    --orb-rose:     rgba(232, 184, 196, 0.18);
-    /* Fonts — ElevenLabs uses Waldenburg; we use EB Garamond as open-source substitute */
-    --font-display: 'EB Garamond', 'Times New Roman', serif;
-    --font-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* NAV */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 48px;height:64px;
+    background:rgba(9,8,7,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--hairline);
   }
+  .nav-brand{font-family:var(--font-body);font-size:17px;font-weight:500;letter-spacing:-0.02em;color:var(--fg);text-decoration:none}
+  .nav-links{display:flex;align-items:center;gap:36px;list-style:none}
+  .nav-links a{font-size:14px;font-weight:400;color:var(--fg2);text-decoration:none;transition:color .3s}
+  .nav-links a:hover{color:var(--fg)}
+  .nav-cta{font-size:14px!important;font-weight:500!important;color:var(--fg)!important;background:var(--accent);padding:8px 20px;border-radius:9999px;transition:opacity .3s}
+  .nav-cta:hover{opacity:.85}
 
-  html { scroll-behavior: smooth; overflow-x: hidden; }
-
-  body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--font-body);
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-    letter-spacing: 0.16px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+  /* HERO — full‑bleed, no container */
+  .hero{
+    position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
+    padding:0 0 96px;overflow:hidden;
   }
-
-  /* ========================================
-     Noise grain overlay
-     ======================================== */
-  .noise {
-    position: fixed; inset: 0;
-    z-index: 9998;
-    pointer-events: none;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 256px 256px;
+  .hero .orb{
+    position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;
+    animation:orbFloat 14s ease-in-out infinite;
   }
+  .hero .orb-1{width:520px;height:520px;background:var(--orb-lavender);top:-15%;left:-8%;animation-delay:0s}
+  .hero .orb-2{width:420px;height:420px;background:var(--orb-mint);top:15%;right:-10%;animation-delay:-5s}
+  .hero .orb-3{width:360px;height:360px;background:var(--orb-peach);bottom:-10%;left:30%;animation-delay:-9s}
+  @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-35px) scale(1.06)}66%{transform:translate(-18px,25px) scale(0.94)}}
 
-  /* ========================================
-     Navigation
-     ======================================== */
-  .nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex; justify-content: space-between; align-items: center;
+  .hero-content{
+    position:relative;z-index:1;
     padding: 0 48px;
-    height: 64px;
-    background: rgba(10, 9, 8, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--hairline);
-    transition: background 0.4s ease;
-  }
-
-  .nav-logo {
-    font-family: var(--font-body);
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--fg);
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex; align-items: center; gap: 36px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0;
-    color: var(--fg-secondary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .nav-links a:hover { color: var(--fg); }
-
-  .nav-cta {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--fg) !important;
-    background: var(--accent);
-    padding: 8px 20px;
-    border-radius: 9999px;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .nav-cta:hover { opacity: 0.85; }
-
-  /* ========================================
-     Container
-     ======================================== */
-  .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 48px;
+    width: 100%;
   }
+  .hero-brand{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:5px 14px;background:var(--accent-soft);
+    border:1px solid rgba(200,150,106,0.12);border-radius:9999px;
+    margin-bottom: 36px;
+    opacity:0;animation:fadeUp .6s ease forwards .2s;
+  }
+  .hero-brand .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+  .hero-brand span{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* ========================================
-     Hero Section
-     ======================================== */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 128px 48px 96px;
-    overflow: hidden;
-  }
-
-  /* Atmospheric gradient orbs */
-  .hero .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    pointer-events: none;
-    animation: orbFloat 12s ease-in-out infinite;
-  }
-  .hero .orb-1 {
-    width: 500px; height: 500px;
-    background: var(--orb-lavender);
-    top: -10%; left: -5%;
-    animation-delay: 0s;
-  }
-  .hero .orb-2 {
-    width: 400px; height: 400px;
-    background: var(--orb-mint);
-    top: 20%; right: -8%;
-    animation-delay: -4s;
-  }
-  .hero .orb-3 {
-    width: 350px; height: 350px;
-    background: var(--orb-peach);
-    bottom: -5%; left: 30%;
-    animation-delay: -8s;
-  }
-
-  @keyframes orbFloat {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(20px, -30px) scale(1.05); }
-    66% { transform: translate(-15px, 20px) scale(0.95); }
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(212, 165, 116, 0.15);
-    border-radius: 9999px;
-    margin-bottom: 40px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s ease forwards 0.3s;
-  }
-
-  .hero-badge span {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.96px;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-
-  .hero-badge .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 6.5vw, 72px);
-    font-weight: 300;
-    line-height: 1.08;
-    letter-spacing: -1.5px;
-    color: var(--fg);
-    max-width: 900px;
-    margin-bottom: 28px;
-    position: relative;
-    z-index: 1;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 1s ease forwards 0.5s;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .hero-sub {
-    font-family: var(--font-body);
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.6;
-    color: var(--fg-secondary);
-    max-width: 580px;
-    margin-bottom: 44px;
-    position: relative;
-    z-index: 1;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s ease forwards 0.7s;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s ease forwards 0.9s;
-  }
-
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Buttons */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--bg);
-    background: var(--fg);
-    padding: 12px 28px;
-    border-radius: 9999px;
-    text-decoration: none;
-    transition: opacity 0.3s ease, transform 0.2s ease;
-  }
-
-  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-
-  .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--fg);
-    background: transparent;
-    padding: 11px 27px;
-    border-radius: 9999px;
-    border: 1px solid var(--hairline-strong);
-    text-decoration: none;
-    transition: border-color 0.3s ease, background 0.3s ease;
-  }
-
-  .btn-outline:hover {
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-  }
-
-  /* Scroll hint */
-  .hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 1.5s;
-  }
-
-  .hero-scroll span {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--fg-muted);
-  }
-
-  .scroll-line {
-    width: 1px; height: 40px;
-    background: linear-gradient(to bottom, var(--fg-muted), transparent);
-    animation: scrollPulse 2.5s ease-in-out infinite;
-  }
-
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
-    50% { opacity: 0.8; transform: scaleY(1); }
-  }
-
-  /* ========================================
-     Vision Section
-     ======================================== */
-  .section { padding: 96px 0; position: relative; }
-
-  .vision {
-    padding: 120px 0;
-  }
-
-  .vision .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-
-  .vision-label {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 20px;
-  }
-
-  .vision-title {
-    font-family: var(--font-display);
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 300;
-    line-height: 1.15;
-    letter-spacing: -0.8px;
-    color: var(--fg);
+  .hero h1{
+    font-family:var(--font-display);font-size:clamp(44px,7vw,80px);font-weight:300;
+    line-height:1.06;letter-spacing:-1.8px;color:var(--fg);
+    max-width: 860px;
     margin-bottom: 24px;
+    opacity:0;animation:fadeUp .8s ease forwards .4s;
   }
-
-  .vision-title em {
-    font-style: italic;
-    color: var(--accent);
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero p{
+    font-size:17px;line-height:1.6;color:var(--fg2);
+    max-width:480px;margin-bottom:12px;
+    opacity:0;animation:fadeUp .7s ease forwards .6s;
   }
-
-  .vision-body {
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--fg-secondary);
-    margin-bottom: 32px;
+  .hero p.cn{
+    font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--fg3);margin-bottom:36px;
+    opacity:0;animation:fadeUp .7s ease forwards .7s;
   }
-
-  .vision-body-cn {
-    font-size: 15px;
-    line-height: 1.8;
-    color: var(--fg-muted);
-    font-style: italic;
+  .hero-actions{
+    display:flex;gap:14px;align-items:center;
+    opacity:0;animation:fadeUp .7s ease forwards .85s;
   }
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+  .hero-badge,.hero h1,.hero p,.hero p.cn,.hero-actions{transform:translateY(16px)}
 
-  .vision-visual {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    border-radius: 24px;
-    overflow: hidden;
-    background: var(--bg-card);
-    border: 1px solid var(--hairline);
+  .btn-primary{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:14px;font-weight:500;color:var(--bg);background:var(--fg);
+    padding:12px 28px;border-radius:9999px;text-decoration:none;
+    transition:opacity .3s,transform .2s;
   }
-
-  .vision-visual .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
+  .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+  .btn-outline{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:14px;font-weight:500;color:var(--fg);background:transparent;
+    padding:11px 27px;border-radius:9999px;border:1px solid var(--hairline-strong);
+    text-decoration:none;transition:border-color .3s,background .3s;
   }
+  .btn-outline:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04)}
 
-  .vision-visual .orb-a {
-    width: 300px; height: 300px;
-    background: var(--orb-sky);
-    top: -20%; left: 20%;
+  /* SCROLL */
+  .hero-scroll{
+    position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    opacity:0;animation:fadeUp .6s ease forwards 1.4s;
   }
+  .hero-scroll span{font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg3)}
+  .scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--fg3),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
+  @keyframes scrollPulse{0%,100%{opacity:.25;transform:scaleY(.5)}50%{opacity:.8;transform:scaleY(1)}}
 
-  .vision-visual .orb-b {
-    width: 250px; height: 250px;
-    background: var(--orb-lavender);
-    bottom: -15%; right: 15%;
+  /* SECTION */
+  .section{padding:112px 0;position:relative}
+  .sec-inner{max-width:1080px;margin:0 auto;padding:0 48px}
+  .sec-label{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .sec-title{font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:300;line-height:1.14;letter-spacing:-0.8px;color:var(--fg);margin-bottom:20px}
+  .sec-title em{font-style:italic;color:var(--accent)}
+  .sec-body{font-size:16px;line-height:1.7;color:var(--fg2);max-width:600px;margin-bottom:12px}
+  .sec-body-cn{font-family:var(--font-display);font-style:italic;font-size:15px;line-height:1.8;color:var(--fg3)}
+
+  /* VISION — split layout, no cards */
+  .vision{border-top:1px solid var(--hairline)}
+  .vision .sec-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+  .vision-visual{
+    position:relative;aspect-ratio:1/1;overflow:hidden;
+    background:radial-gradient(ellipse at 40% 50%,rgba(168,200,232,0.08) 0%,transparent 60%),
+               radial-gradient(ellipse at 60% 40%,rgba(200,184,224,0.06) 0%,transparent 60%),
+               #0d0c0b;
+    display:flex;align-items:center;justify-content:center;
   }
+  .vision-visual h3{font-family:var(--font-display);font-size:32px;font-weight:300;color:var(--fg);opacity:.5;letter-spacing:-0.5px}
+  .vision-visual .sub{font-size:12px;color:var(--fg3);margin-top:6px;letter-spacing:2px}
 
-  .vision-visual .orb-c {
-    width: 200px; height: 200px;
-    background: var(--orb-rose);
-    top: 40%; left: 50%;
+  /* RESEARCH — dividers, no cards */
+  .research{border-top:1px solid var(--hairline)}
+  .research-list{list-style:none;border-top:1px solid var(--hairline)}
+  .research-item{
+    display:flex;align-items:flex-start;gap:48px;
+    padding:36px 0;border-bottom:1px solid var(--hairline);
+    transition:padding-left .5s cubic-bezier(.25,.46,.45,.94);
   }
+  .research-item:hover{padding-left:16px}
+  .research-num{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:2px;color:var(--accent);min-width:48px;padding-top:4px}
+  .research-body h3{font-family:var(--font-body);font-size:20px;font-weight:500;color:var(--fg);margin-bottom:4px;letter-spacing:-0.01em}
+  .research-body .cn{font-family:var(--font-display);font-style:italic;font-size:15px;font-weight:300;color:var(--accent);margin-bottom:10px}
+  .research-body p{font-size:15px;line-height:1.65;color:var(--fg2);max-width:560px}
 
-  .vision-visual-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-  }
+  /* ROADMAP — dividers */
+  .roadmap{border-top:1px solid var(--hairline)}
+  .roadmap .timeline{max-width:800px;margin:0 auto;position:relative}
+  .timeline::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--accent),var(--hairline))}
+  .timeline-item{display:flex;gap:40px;padding-bottom:60px;position:relative}
+  .timeline-item:last-child{padding-bottom:0}
+  .timeline-dot{flex-shrink:0;width:40px;display:flex;justify-content:center;padding-top:6px}
+  .timeline-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 3px rgba(200,150,106,0.18)}
+  .timeline-item.future .timeline-dot::before{background:var(--hairline-strong);box-shadow:0 0 0 3px rgba(255,255,255,0.02)}
+  .timeline-phase{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .timeline-item.future .timeline-phase{color:var(--fg3)}
+  .timeline-content h3{font-size:18px;font-weight:500;color:var(--fg);margin-bottom:3px}
+  .timeline-content .cn{font-family:var(--font-display);font-style:italic;font-size:14px;font-weight:300;color:var(--fg2);margin-bottom:10px}
+  .timeline-content p{font-size:15px;line-height:1.65;color:var(--fg2)}
+  .timeline-item.future .timeline-content p{color:var(--fg3)}
 
-  .vision-visual-text h3 {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 300;
-    letter-spacing: -0.5px;
-    color: var(--fg);
-    opacity: 0.6;
-  }
+  /* CTA */
+  .cta{position:relative;text-align:center;overflow:hidden;border-top:1px solid var(--hairline)}
+  .cta .orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+  .cta .orb-1{width:380px;height:380px;background:var(--orb-mint);top:-20%;left:10%}
+  .cta .orb-2{width:340px;height:340px;background:var(--orb-peach);bottom:-20%;right:10%}
 
-  .vision-visual-text p {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--fg-muted);
-    margin-top: 8px;
-    letter-spacing: 1px;
-  }
+  /* FOOTER */
+  .footer{border-top:1px solid var(--hairline);padding:64px 0 48px}
+  .footer .sec-inner{display:flex;justify-content:space-between;align-items:flex-start}
+  .footer-brand{display:flex;flex-direction:column;gap:12px}
+  .footer-logo{font-size:17px;font-weight:500;color:var(--fg);letter-spacing:-0.02em}
+  .footer-tagline{font-family:var(--font-display);font-style:italic;font-size:13px;font-weight:300;color:var(--fg3);max-width:240px;line-height:1.5}
+  .footer-col{display:flex;flex-direction:column;gap:10px}
+  .footer-col-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--fg3)}
+  .footer-col a{font-size:14px;color:var(--fg2);text-decoration:none;transition:color .3s}
+  .footer-col a:hover{color:var(--fg)}
+  .footer-bottom{margin-top:48px;padding-top:20px;border-top:1px solid var(--hairline);display:flex;justify-content:space-between;align-items:center}
+  .footer-copy{font-size:12px;color:var(--fg3)}
+  .footer-socials{display:flex;gap:20px}
+  .footer-socials a{font-size:12px;color:var(--fg3);text-decoration:none;transition:color .3s}
+  .footer-socials a:hover{color:var(--fg)}
 
-  /* ========================================
-     Pillars Section
-     ======================================== */
-  .pillars { border-top: 1px solid var(--hairline); }
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.25,.46,.45,.94)}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal-d1{transition-delay:.08s}.reveal-d2{transition-delay:.16s}.reveal-d3{transition-delay:.24s}
 
-  .pillars-header {
-    text-align: center;
-    margin-bottom: 72px;
-  }
-
-  .pillars-label {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  .pillars-title {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 3.5vw, 42px);
-    font-weight: 300;
-    letter-spacing: -0.6px;
-    color: var(--fg);
-  }
-
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .pillar-card {
-    background: var(--bg-card);
-    border: 1px solid var(--hairline);
-    border-radius: 20px;
-    padding: 36px 32px;
-    transition: background 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .pillar-card:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--hairline-strong);
-    transform: translateY(-4px);
-  }
-
-  .pillar-icon {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    font-size: 22px;
-  }
-
-  .pillar-icon.icon-perception { background: rgba(167, 229, 211, 0.12); }
-  .pillar-icon.icon-cognition { background: rgba(200, 184, 224, 0.12); }
-  .pillar-icon.icon-action { background: rgba(244, 197, 168, 0.12); }
-
-  .pillar-card h3 {
-    font-family: var(--font-body);
-    font-size: 19px;
-    font-weight: 500;
-    color: var(--fg);
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-
-  .pillar-card .cn-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  .pillar-card p {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--fg-secondary);
-  }
-
-  /* ========================================
-     Timeline / Roadmap Section
-     ======================================== */
-  .roadmap {
-    position: relative;
-    border-top: 1px solid var(--hairline);
-  }
-
-  .roadmap-header {
-    text-align: center;
-    margin-bottom: 72px;
-  }
-
-  .roadmap-label {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  .roadmap-title {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 3.5vw, 42px);
-    font-weight: 300;
-    letter-spacing: -0.6px;
-    color: var(--fg);
-  }
-
-  .timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 24px;
-    top: 0; bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, var(--accent), var(--hairline));
-  }
-
-  .timeline-item {
-    display: flex;
-    gap: 32px;
-    padding-bottom: 56px;
-    position: relative;
-  }
-
-  .timeline-item:last-child { padding-bottom: 0; }
-
-  .timeline-dot {
-    flex-shrink: 0;
-    width: 48px;
-    display: flex;
-    justify-content: center;
-    padding-top: 4px;
-  }
-
-  .timeline-dot::before {
-    content: '';
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
-    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
-  }
-
-  .timeline-item.future .timeline-dot::before {
-    background: var(--hairline-strong);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.03);
-  }
-
-  .timeline-content {
-    flex: 1;
-    padding-top: 0;
-  }
-
-  .timeline-phase {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-
-  .timeline-item.future .timeline-phase { color: var(--fg-muted); }
-
-  .timeline-content h3 {
-    font-family: var(--font-body);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--fg);
-    margin-bottom: 4px;
-  }
-
-  .timeline-content .cn-h3 {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--fg-secondary);
-    margin-bottom: 12px;
-  }
-
-  .timeline-content p {
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--fg-secondary);
-  }
-
-  .timeline-item.future .timeline-content p { color: var(--fg-muted); }
-
-  /* ========================================
-     CTA Section
-     ======================================== */
-  .cta-section {
-    position: relative;
-    text-align: center;
-    overflow: hidden;
-  }
-
-  .cta-section .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-  }
-
-  .cta-section .orb-1 {
-    width: 400px; height: 400px;
-    background: var(--orb-mint);
-    top: -20%; left: 10%;
-  }
-
-  .cta-section .orb-2 {
-    width: 350px; height: 350px;
-    background: var(--orb-peach);
-    bottom: -20%; right: 10%;
-  }
-
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-  }
-
-  .cta-label {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 20px;
-  }
-
-  .cta-title {
-    font-family: var(--font-display);
-    font-size: clamp(32px, 5vw, 56px);
-    font-weight: 300;
-    line-height: 1.12;
-    letter-spacing: -1px;
-    color: var(--fg);
-    margin-bottom: 16px;
-  }
-
-  .cta-title em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .cta-sub {
-    font-size: 16px;
-    color: var(--fg-secondary);
-    margin-bottom: 40px;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* ========================================
-     Footer
-     ======================================== */
-  .footer {
-    border-top: 1px solid var(--hairline);
-    padding: 64px 0 48px;
-  }
-
-  .footer .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .footer-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .footer-logo {
-    font-family: var(--font-body);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--fg);
-    letter-spacing: -0.02em;
-  }
-
-  .footer-tagline {
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--fg-muted);
-    max-width: 260px;
-    line-height: 1.5;
-  }
-
-  .footer-col {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .footer-col-title {
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--fg-muted);
-  }
-
-  .footer-col a {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--fg-secondary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .footer-col a:hover { color: var(--fg); }
-
-  .footer-bottom {
-    margin-top: 48px;
-    padding-top: 24px;
-    border-top: 1px solid var(--hairline);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-copy {
-    font-size: 13px;
-    color: var(--fg-muted);
-  }
-
-  .footer-socials {
-    display: flex;
-    gap: 20px;
-  }
-
-  .footer-socials a {
-    font-size: 13px;
-    color: var(--fg-muted);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .footer-socials a:hover { color: var(--fg); }
-
-  /* ========================================
-     Scroll Reveal
-     ======================================== */
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-
-  /* ========================================
-     Responsive
-     ======================================== */
-  @media (max-width: 1024px) {
-    .vision .container {
-      grid-template-columns: 1fr;
-      gap: 48px;
-    }
-    .pillars-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .pillars-grid .pillar-card:last-child {
-      grid-column: 1 / -1;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .nav { padding: 0 24px; }
-    .nav-links .hide-mobile { display: none; }
-    .container { padding: 0 24px; }
-    .hero { padding: 100px 24px 80px; }
-    .hero-actions { flex-direction: column; width: 100%; }
-    .hero-actions a { width: 100%; justify-content: center; text-align: center; }
-    .pillars-grid { grid-template-columns: 1fr; }
-    .pillars-grid .pillar-card:last-child { grid-column: auto; }
-    .footer .container { flex-direction: column; gap: 40px; }
-    .footer-bottom { flex-direction: column; gap: 16px; align-items: flex-start; }
+  @media(max-width:768px){
+    .nav{padding:0 24px}.nav-links .hide-mb{display:none}
+    .hero-content,.sec-inner{padding:0 24px}
+    .hero{padding-bottom:72px;justify-content:flex-end}
+    .hero h1{font-size:clamp(32px,8vw,52px)}
+    .hero-scroll{bottom:24px}
+    .vision .sec-inner{grid-template-columns:1fr;gap:40px}
+    .vision-visual{aspect-ratio:16/10}
+    .research-item{gap:24px}.research-item:hover{padding-left:0}
+    .footer .sec-inner{flex-direction:column;gap:32px}
+    .footer-bottom{flex-direction:column;gap:12px;align-items:flex-start}
+    .hero-actions{flex-direction:column;width:100%}
+    .hero-actions a{width:100%;justify-content:center}
   }
 </style>
 </head>
 <body>
 
-<!-- Noise overlay -->
 <div class="noise"></div>
 
-<!-- Navigation -->
+<!-- NAV -->
 <nav class="nav">
-  <a href="#" class="nav-logo">Embora</a>
+  <a href="#" class="nav-brand">Embora</a>
   <ul class="nav-links">
-    <li><a href="#vision">Vision</a></li>
-    <li class="hide-mobile"><a href="#pillars">Research</a></li>
-    <li class="hide-mobile"><a href="#roadmap">Roadmap</a></li>
-    <li class="hide-mobile"><a href="#contact">Contact</a></li>
-    <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+    <li class="hide-mb"><a href="#vision">Vision</a></li>
+    <li class="hide-mb"><a href="#research">Research</a></li>
+    <li class="hide-mb"><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
   </ul>
 </nav>
 
-<!-- Hero -->
+<!-- HERO -->
 <section class="hero">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-
-  <div class="hero-badge">
-    <div class="dot"></div>
-    <span>Building the Future of AI</span>
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+  <div class="hero-content">
+    <div class="hero-brand">
+      <div class="dot"></div><span>Embodied Intelligence</span>
+    </div>
+    <h1>Intelligence that<br><em>understands</em> the real world</h1>
+    <p>We build AI systems that perceive, reason, and act in physical reality — bridging the gap between artificial minds and the world we live in.</p>
+    <p class="cn">Embora 构建理解物理世界的具身智能，让机器在真实环境中感知、思考与行动。</p>
+    <div class="hero-actions">
+      <a href="#vision" class="btn-primary">Learn More</a>
+      <a href="#contact" class="btn-outline">Join Us</a>
+    </div>
   </div>
-
-  <h1>Intelligence that <em>understands</em><br>the physical world</h1>
-
-  <p class="hero-sub">
-    Embora is building embodied intelligence systems that perceive, reason, and act in the real world &mdash;
-    bridging the gap between artificial minds and physical reality.
-  </p>
-
-  <p class="hero-sub" style="font-style: italic; font-family: var(--font-display); margin-top: -16px; font-size: 15px; color: var(--fg-muted);">
-    Embora &mdash; 构建理解物理世界的具身智能，<br>让机器在真实环境中感知、思考与行动。
-  </p>
-
-  <div class="hero-actions">
-    <a href="#vision" class="btn-primary">Learn More</a>
-    <a href="#contact" class="btn-outline">Join Us</a>
-  </div>
-
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
-<!-- Vision Section -->
+<!-- VISION -->
 <section class="section vision" id="vision">
-  <div class="container">
+  <div class="sec-inner">
     <div class="reveal">
-      <p class="vision-label">Our Vision / 我们的愿景</p>
-      <h2 class="vision-title">
-        From digital minds<br>to <em>physical presence</em>
-      </h2>
-      <p class="vision-body">
-        We believe the next leap in artificial intelligence isn't just about better language models or bigger datasets.
-        It's about giving AI a body &mdash; the ability to touch, move, and interact with the physical world
-        the way humans do. Embora exists to make this transition happen.
-      </p>
-      <p class="vision-body-cn">
-        我们相信，人工智能的下一步飞跃不只是更好的语言模型或更大的数据集，
-        而是赋予 AI 一个"身体"——让它能够像人类一样触摸、移动、与物理世界互动。
-        Embora 存在的意义，就是推动这一转变的发生。
-      </p>
+      <p class="sec-label">Our Vision · 我们的愿景</p>
+      <h2 class="sec-title">From digital minds to <em>physical presence</em></h2>
+      <p class="sec-body">The next leap in AI isn't about better language models or bigger datasets. It's about giving intelligence a body — the ability to touch, move, and interact with the physical world the way humans do.</p>
+      <p class="sec-body-cn">AI 的下一步飞跃不是更好的语言模型，而是赋予智能一个"身体"——让它能够触摸、移动、与物理世界互动。</p>
     </div>
-    <div class="vision-visual reveal reveal-delay-2">
-      <div class="orb orb-a"></div>
-      <div class="orb orb-b"></div>
-      <div class="orb orb-c"></div>
-      <div class="vision-visual-text">
-        <h3>Embora.ai</h3>
-        <p>COMING SOON</p>
-      </div>
+    <div class="vision-visual reveal reveal-d2">
+      <div><h3>Embora.ai</h3><p class="sub">COMING SOON</p></div>
     </div>
   </div>
 </section>
 
-<!-- Pillars Section -->
-<section class="section pillars" id="pillars">
-  <div class="container">
-    <div class="pillars-header reveal">
-      <p class="pillars-label">Core Research / 核心研究</p>
-      <h2 class="pillars-title">Three pillars of embodied intelligence</h2>
+<!-- RESEARCH -->
+<section class="section research" id="research">
+  <div class="sec-inner">
+    <div class="reveal" style="margin-bottom:56px">
+      <p class="sec-label">Core Research · 核心研究</p>
+      <h2 class="sec-title">Three pillars of <em>embodied intelligence</em></h2>
     </div>
-    <div class="pillars-grid">
-      <div class="pillar-card reveal reveal-delay-1">
-        <div class="pillar-icon icon-perception">&#9673;</div>
-        <h3>Perception</h3>
-        <p class="cn-name">感知</p>
-        <p>Multi-modal sensing systems that enable machines to see, hear, and feel their environment with human-level fidelity. 多模态感知系统，让机器以人类级别的精度观察、聆听和感知周围环境。</p>
-      </div>
-      <div class="pillar-card reveal reveal-delay-2">
-        <div class="pillar-icon icon-cognition">&#9670;</div>
-        <h3>Cognition</h3>
-        <p class="cn-name">认知</p>
-        <p>Reasoning engines that understand physics, spatial relationships, and causal logic to make intelligent decisions. 推理引擎，理解物理规律、空间关系和因果逻辑，做出智能决策。</p>
-      </div>
-      <div class="pillar-card reveal reveal-delay-3">
-        <div class="pillar-icon icon-action">&#9651;</div>
-        <h3>Action</h3>
-        <p class="cn-name">行动</p>
-        <p>Execution systems that translate intelligence into precise physical interaction and manipulation. 将智能转化为精准物理交互和操作的执行系统。</p>
-      </div>
-    </div>
+    <ul class="research-list">
+      <li class="research-item reveal reveal-d1">
+        <span class="research-num">01</span>
+        <div class="research-body">
+          <h3>Perception</h3>
+          <p class="cn">感知</p>
+          <p>Multi-modal sensing systems that enable machines to see, hear, and feel their environment with human-level fidelity. 多模态感知系统，让机器以人类精度观察、聆听和感知周围环境。</p>
+        </div>
+      </li>
+      <li class="research-item reveal reveal-d2">
+        <span class="research-num">02</span>
+        <div class="research-body">
+          <h3>Cognition</h3>
+          <p class="cn">认知</p>
+          <p>Reasoning engines that understand physics, spatial relationships, and causal logic to make intelligent decisions. 推理引擎，理解物理规律、空间关系和因果逻辑，做出智能决策。</p>
+        </div>
+      </li>
+      <li class="research-item reveal reveal-d3">
+        <span class="research-num">03</span>
+        <div class="research-body">
+          <h3>Action</h3>
+          <p class="cn">行动</p>
+          <p>Execution systems that translate intelligence into precise physical interaction and manipulation. 将智能转化为精准物理交互和操作的执行系统。</p>
+        </div>
+      </li>
+    </ul>
   </div>
 </section>
 
-<!-- Roadmap Section -->
+<!-- ROADMAP -->
 <section class="section roadmap" id="roadmap">
-  <div class="container">
-    <div class="roadmap-header reveal">
-      <p class="roadmap-label">Roadmap / 发展路线</p>
-      <h2 class="roadmap-title">From foundation to reality</h2>
+  <div class="sec-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:64px">
+      <p class="sec-label">Roadmap · 发展路线</p>
+      <h2 class="sec-title">From foundation to <em>reality</em></h2>
     </div>
     <div class="timeline">
       <div class="timeline-item reveal">
         <div class="timeline-dot"></div>
         <div class="timeline-content">
-          <p class="timeline-phase">Phase 01 &mdash; 2026</p>
+          <p class="timeline-phase">Phase 01 · 2026</p>
           <h3>Foundation Research</h3>
-          <p class="cn-h3">基础研究阶段</p>
-          <p>Establish core research in multi-modal perception and world models. Build our founding team and secure initial funding. 开展多模态感知与世界模型的核心研究，组建创始团队并获得初始资金。</p>
+          <p class="cn">基础研究阶段</p>
+          <p>Establish core research in multi-modal perception and world models. Build the founding team. 开展多模态感知与世界模型的核心研究，组建创始团队。</p>
         </div>
       </div>
       <div class="timeline-item reveal">
         <div class="timeline-dot"></div>
         <div class="timeline-content">
-          <p class="timeline-phase">Phase 02 &mdash; 2027</p>
+          <p class="timeline-phase">Phase 02 · 2027</p>
           <h3>Proto-Agent</h3>
-          <p class="cn-h3">原型智能体</p>
-          <p>Develop our first embodied AI agent capable of navigating and interacting within controlled environments. 开发首个能在受控环境中导航和交互的具身 AI 智能体。</p>
+          <p class="cn">原型智能体</p>
+          <p>Develop the first embodied AI agent capable of navigating and interacting within controlled environments. 开发首个能在受控环境中导航和交互的具身 AI 智能体。</p>
         </div>
       </div>
       <div class="timeline-item reveal">
         <div class="timeline-dot"></div>
         <div class="timeline-content">
-          <p class="timeline-phase">Phase 03 &mdash; 2028</p>
+          <p class="timeline-phase">Phase 03 · 2028</p>
           <h3>Real-World Deployment</h3>
-          <p class="cn-h3">真实世界部署</p>
-          <p>Deploy embodied agents in real-world scenarios &mdash; from smart manufacturing to assistive robotics. 将具身智能体部署到真实场景——从智能制造到辅助机器人。</p>
+          <p class="cn">真实世界部署</p>
+          <p>Deploy agents in real-world scenarios — from smart manufacturing to assistive robotics. 将具身智能体部署到真实场景——从智能制造到辅助机器人。</p>
         </div>
       </div>
       <div class="timeline-item future reveal">
         <div class="timeline-dot"></div>
         <div class="timeline-content">
-          <p class="timeline-phase">Phase 04 &mdash; Beyond</p>
+          <p class="timeline-phase">Phase 04 · Beyond</p>
           <h3>General Embodied Intelligence</h3>
-          <p class="cn-h3">通用具身智能</p>
-          <p>Pursue general-purpose embodied AI that can learn and adapt across any physical task, in any environment. 追求通用具身智能——能在任何物理任务和环境中学习与适应。</p>
+          <p class="cn">通用具身智能</p>
+          <p>Pursue general-purpose embodied AI that learns and adapts across any physical task, in any environment. 追求能在任何物理任务和环境中学习与适应的通用具身智能。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA Section -->
-<section class="section cta-section" id="contact">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="container cta-inner reveal">
-    <p class="cta-label">Get Involved / 加入我们</p>
-    <h2 class="cta-title">Let's build the<br><em>physical future</em> of AI</h2>
-    <p class="cta-sub">
+<!-- CTA -->
+<section class="section cta" id="contact">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div>
+  <div class="sec-inner reveal" style="text-align:center;position:relative;z-index:1">
+    <p class="sec-label">Get Involved · 加入我们</p>
+    <h2 class="sec-title">Let's build the<br><em>physical future</em> of AI</h2>
+    <p class="sec-body" style="margin:0 auto 40px;max-width:480px">
       We're looking for researchers, engineers, and dreamers who believe intelligence should live beyond the screen.<br>
       我们正在寻找相信智能应当超越屏幕的研究者、工程师和梦想家。
     </p>
-    <div class="hero-actions">
+    <div class="hero-actions" style="justify-content:center">
       <a href="mailto:hello@embora.ai" class="btn-primary">Contact Us</a>
       <a href="#" class="btn-outline">View Careers</a>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
+<!-- FOOTER -->
 <footer class="footer">
-  <div class="container">
+  <div class="sec-inner">
     <div class="footer-brand">
       <span class="footer-logo">Embora</span>
-      <span class="footer-tagline">Embodied Intelligence for the Real World.<br>构建理解物理世界的具身智能。</span>
+      <span class="footer-tagline">Embodied Intelligence for the Real World. 构建理解物理世界的具身智能。</span>
     </div>
-    <div style="display: flex; gap: 64px;">
+    <div style="display:flex;gap:56px">
       <div class="footer-col">
         <span class="footer-col-title">Company</span>
-        <a href="#vision">About</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href="#">Careers</a>
-        <a href="#">Blog</a>
+        <a href="#vision">About</a><a href="#roadmap">Roadmap</a><a href="#">Careers</a><a href="#">Blog</a>
       </div>
       <div class="footer-col">
         <span class="footer-col-title">Research</span>
-        <a href="#pillars">Perception</a>
-        <a href="#pillars">Cognition</a>
-        <a href="#pillars">Action</a>
-        <a href="#">Publications</a>
+        <a href="#research">Perception</a><a href="#research">Cognition</a><a href="#research">Action</a><a href="#">Publications</a>
       </div>
     </div>
   </div>
-  <div class="container footer-bottom">
+  <div class="sec-inner footer-bottom">
     <span class="footer-copy">&copy; 2026 Embora. All rights reserved.</span>
     <div class="footer-socials">
-      <a href="#">Twitter / X</a>
-      <a href="#">GitHub</a>
-      <a href="#">LinkedIn</a>
-      <a href="#">WeChat</a>
+      <a href="#">Twitter</a><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">WeChat</a>
     </div>
   </div>
 </footer>
 
-<!-- Scroll Reveal Script -->
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+const observer=new IntersectionObserver((e)=>{e.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:0.12,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));
 </script>
-
 </body>
 </html>
