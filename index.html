@@ -5,401 +5,568 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Embora — Embodied Intelligence</title>
 <meta name="description" content="Embora 构建理解物理世界的具身智能。让机器在真实环境中感知、思考与行动。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
-
   *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --bg:#090807;--fg:#f5f0ea;--fg2:#9e9892;--fg3:#5e5852;
-    --accent:#c8966a;--accent-soft:rgba(200,150,106,0.10);
-    --hairline:rgba(255,255,255,0.06);--hairline-strong:rgba(255,255,255,0.10);
-    --orb-mint:rgba(167,229,211,0.22);--orb-peach:rgba(244,197,168,0.18);
-    --orb-lavender:rgba(200,184,224,0.18);--orb-sky:rgba(168,200,232,0.18);
-    --orb-rose:rgba(232,184,196,0.15);
-    --font-display:'EB Garamond','Times New Roman',serif;
-    --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --bg:#f0f0f5;
+    --bg-dark:#0a0a0a;
+    --fg:#0a0a0a;
+    --fg-light:#666;
+    --fg-muted:#999;
+    --accent:#c8966a;
+    --accent-soft:rgba(200,150,106,0.12);
+    --card-bg:#0a0a0a;
+    --hairline:rgba(0,0,0,0.08);
+    --radius:24px;
+    --radius-sm:16px;
+    --font-sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-serif:'Noto Serif SC','Songti SC',serif;
   }
-  html{scroll-behavior:smooth;overflow-x:hidden}
+  html{scroll-behavior:smooth}
   body{
-    background:var(--bg);color:var(--fg);font-family:var(--font-body);
-    font-size:16px;font-weight:400;line-height:1.5;letter-spacing:0.16px;
-    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;
-  }
-  .noise{
-    position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.025;
-    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size:256px 256px;
+    background:var(--bg);color:var(--fg);font-family:var(--font-sans);
+    font-size:16px;font-weight:400;line-height:1.5;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
   }
 
-  /* NAV */
+  /* ===== NAV ===== */
   .nav{
     position:fixed;top:0;left:0;right:0;z-index:100;
     display:flex;justify-content:space-between;align-items:center;
-    padding:0 48px;height:64px;
-    background:rgba(9,8,7,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--hairline);
+    padding:24px 40px;height:80px;
   }
-  .nav-brand{font-family:var(--font-body);font-size:17px;font-weight:500;letter-spacing:-0.02em;color:var(--fg);text-decoration:none}
-  .nav-links{display:flex;align-items:center;gap:36px;list-style:none}
-  .nav-links a{font-size:14px;font-weight:400;color:var(--fg2);text-decoration:none;transition:color .3s}
-  .nav-links a:hover{color:var(--fg)}
-  .nav-cta{font-size:14px!important;font-weight:500!important;color:var(--fg)!important;background:var(--accent);padding:8px 20px;border-radius:9999px;transition:opacity .3s}
-  .nav-cta:hover{opacity:.85}
+  .nav-brand{font-size:18px;font-weight:600;letter-spacing:-0.02em;color:var(--fg);text-decoration:none}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .nav-btn{
+    font-size:13px;font-weight:500;color:#fff;background:var(--fg);
+    padding:10px 20px;border-radius:9999px;text-decoration:none;
+    transition:opacity .3s;border:none;cursor:pointer;
+  }
+  .nav-btn:hover{opacity:.75}
+  .nav-menu{
+    font-size:13px;font-weight:500;color:var(--fg);background:#fff;
+    padding:10px 18px;border-radius:9999px;text-decoration:none;
+    border:1px solid var(--hairline);cursor:pointer;
+    transition:background .3s;
+  }
+  .nav-menu:hover{background:var(--bg)}
 
-  /* HERO — full‑bleed, no container */
+  /* ===== HERO ===== */
   .hero{
-    position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
-    padding:0 0 96px;overflow:hidden;
+    position:relative;min-height:100svh;display:flex;flex-direction:column;
+    padding:120px 40px 40px;overflow:hidden;
   }
-  .hero .orb{
-    position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;
-    animation:orbFloat 14s ease-in-out infinite;
+  .hero-headline{
+    max-width:900px;margin-bottom:48px;
+    opacity:0;transform:translateY(30px);
+    animation:fadeUp .9s cubic-bezier(.16,1,.3,1) forwards .2s;
   }
-  .hero .orb-1{width:520px;height:520px;background:var(--orb-lavender);top:-15%;left:-8%;animation-delay:0s}
-  .hero .orb-2{width:420px;height:420px;background:var(--orb-mint);top:15%;right:-10%;animation-delay:-5s}
-  .hero .orb-3{width:360px;height:360px;background:var(--orb-peach);bottom:-10%;left:30%;animation-delay:-9s}
-  @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-35px) scale(1.06)}66%{transform:translate(-18px,25px) scale(0.94)}}
+  .hero-headline h1{
+    font-family:var(--font-sans);font-size:clamp(42px,7vw,84px);
+    font-weight:600;line-height:1.05;letter-spacing:-2.5px;color:var(--fg);
+  }
+  .hero-headline .cn{
+    font-family:var(--font-serif);font-size:clamp(20px,2.5vw,32px);
+    font-weight:400;color:var(--fg-light);margin-top:16px;
+    letter-spacing:0.5px;
+  }
 
-  .hero-content{
-    position:relative;z-index:1;
-    padding: 0 48px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .hero-visual{
+    position:relative;width:100%;flex:1;min-height:420px;
+    background:var(--card-bg);border-radius:var(--radius);
+    overflow:hidden;
+    opacity:0;transform:translateY(40px);
+    animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards .5s;
   }
-  .hero-brand{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:5px 14px;background:var(--accent-soft);
-    border:1px solid rgba(200,150,106,0.12);border-radius:9999px;
-    margin-bottom: 36px;
-    opacity:0;animation:fadeUp .6s ease forwards .2s;
-  }
-  .hero-brand .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
-  .hero-brand span{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent)}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .hero-visual canvas{position:absolute;inset:0;width:100%;height:100%}
 
-  .hero h1{
-    font-family:var(--font-display);font-size:clamp(44px,7vw,80px);font-weight:300;
-    line-height:1.06;letter-spacing:-1.8px;color:var(--fg);
-    max-width: 860px;
-    margin-bottom: 24px;
-    opacity:0;animation:fadeUp .8s ease forwards .4s;
-  }
-  .hero h1 em{font-style:italic;color:var(--accent)}
-  .hero p{
-    font-size:17px;line-height:1.6;color:var(--fg2);
-    max-width:480px;margin-bottom:12px;
-    opacity:0;animation:fadeUp .7s ease forwards .6s;
-  }
-  .hero p.cn{
-    font-family:var(--font-display);font-style:italic;font-size:15px;color:var(--fg3);margin-bottom:36px;
-    opacity:0;animation:fadeUp .7s ease forwards .7s;
-  }
-  .hero-actions{
-    display:flex;gap:14px;align-items:center;
-    opacity:0;animation:fadeUp .7s ease forwards .85s;
-  }
-  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-  .hero-badge,.hero h1,.hero p,.hero p.cn,.hero-actions{transform:translateY(16px)}
-
-  .btn-primary{
-    display:inline-flex;align-items:center;gap:8px;
-    font-size:14px;font-weight:500;color:var(--bg);background:var(--fg);
-    padding:12px 28px;border-radius:9999px;text-decoration:none;
-    transition:opacity .3s,transform .2s;
-  }
-  .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-  .btn-outline{
-    display:inline-flex;align-items:center;gap:8px;
-    font-size:14px;font-weight:500;color:var(--fg);background:transparent;
-    padding:11px 27px;border-radius:9999px;border:1px solid var(--hairline-strong);
-    text-decoration:none;transition:border-color .3s,background .3s;
-  }
-  .btn-outline:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04)}
-
-  /* SCROLL */
   .hero-scroll{
-    position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    opacity:0;animation:fadeUp .6s ease forwards 1.4s;
+    display:flex;align-items:center;justify-content:center;gap:40px;
+    margin-top:20px;font-size:11px;font-weight:500;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--fg-muted);
   }
-  .hero-scroll span{font-size:10px;font-weight:400;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg3)}
-  .scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--fg3),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
-  @keyframes scrollPulse{0%,100%{opacity:.25;transform:scaleY(.5)}50%{opacity:.8;transform:scaleY(1)}}
+  .hero-scroll .plus{width:8px;height:8px;position:relative}
+  .hero-scroll .plus::before,.hero-scroll .plus::after{
+    content:'';position:absolute;background:var(--fg-muted);
+  }
+  .hero-scroll .plus::before{width:1px;height:100%;left:50%;transform:translateX(-50%)}
+  .hero-scroll .plus::after{width:100%;height:1px;top:50%;transform:translateY(-50%)}
 
-  /* SECTION */
-  .section{padding:112px 0;position:relative}
-  .sec-inner{max-width:1080px;margin:0 auto;padding:0 48px}
-  .sec-label{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
-  .sec-title{font-family:var(--font-display);font-size:clamp(28px,4vw,48px);font-weight:300;line-height:1.14;letter-spacing:-0.8px;color:var(--fg);margin-bottom:20px}
-  .sec-title em{font-style:italic;color:var(--accent)}
-  .sec-body{font-size:16px;line-height:1.7;color:var(--fg2);max-width:600px;margin-bottom:12px}
-  .sec-body-cn{font-family:var(--font-display);font-style:italic;font-size:15px;line-height:1.8;color:var(--fg3)}
+  /* ===== SECTION: BOLD IDEAS ===== */
+  .section-ideas{
+    position:relative;padding:160px 40px 120px;
+    overflow:hidden;
+  }
+  .arc-decoration{
+    position:absolute;top:-60px;left:-100px;width:500px;height:500px;
+    border:3px solid var(--accent);border-radius:50%;
+    opacity:.35;pointer-events:none;
+  }
+  .ideas-headline{
+    max-width:900px;margin-bottom:80px;
+    opacity:0;transform:translateY(30px);
+  }
+  .ideas-headline h2{
+    font-family:var(--font-sans);font-size:clamp(40px,6.5vw,90px);
+    font-weight:600;line-height:1.05;letter-spacing:-2.5px;
+  }
+  .ideas-body{
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;
+  }
+  .ideas-visual{
+    position:relative;border-radius:var(--radius);overflow:hidden;
+    background:var(--card-bg);min-height:360px;
+    opacity:0;transform:translateY(30px);
+  }
+  .ideas-visual::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(200,150,106,.15),transparent 60%);
+    pointer-events:none;
+  }
+  .ideas-visual-inner{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  }
+  .ideas-visual-inner svg{width:70%;height:70%;opacity:.9}
+  .ideas-text{
+    max-width:480px;padding-bottom:20px;
+    opacity:0;transform:translateY(30px);
+  }
+  .ideas-text p{
+    font-size:17px;line-height:1.7;color:var(--fg-light);margin-bottom:28px;
+  }
+  .pill-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--fg);background:#fff;
+    padding:10px 20px;border-radius:9999px;border:1px solid var(--hairline);
+    text-decoration:none;transition:background .3s;
+  }
+  .pill-btn:hover{background:var(--bg)}
+  .pill-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--fg)}
 
-  /* VISION — split layout, no cards */
-  .vision{border-top:1px solid var(--hairline)}
-  .vision .sec-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-  .vision-visual{
-    position:relative;aspect-ratio:1/1;overflow:hidden;
-    background:radial-gradient(ellipse at 40% 50%,rgba(168,200,232,0.08) 0%,transparent 60%),
-               radial-gradient(ellipse at 60% 40%,rgba(200,184,224,0.06) 0%,transparent 60%),
-               #0d0c0b;
+  /* ===== SECTION: FEATURED WORK / RESEARCH ===== */
+  .section-work{padding:120px 40px}
+  .work-header{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    margin-bottom:60px;
+    opacity:0;transform:translateY(30px);
+  }
+  .work-header h2{
+    font-size:clamp(40px,5vw,72px);font-weight:600;
+    letter-spacing:-2px;line-height:1.05;
+  }
+  .work-header p{
+    max-width:320px;font-size:13px;line-height:1.6;color:var(--fg-muted);
+    text-transform:uppercase;letter-spacing:.5px;
+  }
+  .work-grid{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:24px;
+  }
+  .work-item{
+    display:block;text-decoration:none;color:inherit;
+    border-radius:var(--radius);overflow:hidden;
+    transition:transform .4s cubic-bezier(.16,1,.3,1);
+    opacity:0;transform:translateY(30px);
+  }
+  .work-item:hover{transform:scale(.98)}
+  .work-thumb{
+    position:relative;width:100%;aspect-ratio:16/10;
+    background:var(--card-bg);overflow:hidden;
     display:flex;align-items:center;justify-content:center;
   }
-  .vision-visual h3{font-family:var(--font-display);font-size:32px;font-weight:300;color:var(--fg);opacity:.5;letter-spacing:-0.5px}
-  .vision-visual .sub{font-size:12px;color:var(--fg3);margin-top:6px;letter-spacing:2px}
-
-  /* RESEARCH — dividers, no cards */
-  .research{border-top:1px solid var(--hairline)}
-  .research-list{list-style:none;border-top:1px solid var(--hairline)}
-  .research-item{
-    display:flex;align-items:flex-start;gap:48px;
-    padding:36px 0;border-bottom:1px solid var(--hairline);
-    transition:padding-left .5s cubic-bezier(.25,.46,.45,.94);
+  .work-thumb svg,.work-thumb canvas{width:100%;height:100%}
+  .work-info{padding:20px 4px 40px}
+  .work-tags{
+    font-size:11px;font-weight:500;color:var(--fg-muted);
+    text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;
   }
-  .research-item:hover{padding-left:16px}
-  .research-num{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:2px;color:var(--accent);min-width:48px;padding-top:4px}
-  .research-body h3{font-family:var(--font-body);font-size:20px;font-weight:500;color:var(--fg);margin-bottom:4px;letter-spacing:-0.01em}
-  .research-body .cn{font-family:var(--font-display);font-style:italic;font-size:15px;font-weight:300;color:var(--accent);margin-bottom:10px}
-  .research-body p{font-size:15px;line-height:1.65;color:var(--fg2);max-width:560px}
+  .work-title{
+    font-size:clamp(22px,2.5vw,32px);font-weight:600;
+    letter-spacing:-.5px;line-height:1.2;
+  }
 
-  /* ROADMAP — dividers */
-  .roadmap{border-top:1px solid var(--hairline)}
-  .roadmap .timeline{max-width:800px;margin:0 auto;position:relative}
-  .timeline::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--accent),var(--hairline))}
-  .timeline-item{display:flex;gap:40px;padding-bottom:60px;position:relative}
-  .timeline-item:last-child{padding-bottom:0}
-  .timeline-dot{flex-shrink:0;width:40px;display:flex;justify-content:center;padding-top:6px}
-  .timeline-dot::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);box-shadow:0 0 0 3px rgba(200,150,106,0.18)}
-  .timeline-item.future .timeline-dot::before{background:var(--hairline-strong);box-shadow:0 0 0 3px rgba(255,255,255,0.02)}
-  .timeline-phase{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-  .timeline-item.future .timeline-phase{color:var(--fg3)}
-  .timeline-content h3{font-size:18px;font-weight:500;color:var(--fg);margin-bottom:3px}
-  .timeline-content .cn{font-family:var(--font-display);font-style:italic;font-size:14px;font-weight:300;color:var(--fg2);margin-bottom:10px}
-  .timeline-content p{font-size:15px;line-height:1.65;color:var(--fg2)}
-  .timeline-item.future .timeline-content p{color:var(--fg3)}
+  /* ===== SECTION: VISION ===== */
+  .section-vision{
+    position:relative;padding:160px 40px;
+    overflow:hidden;
+  }
+  .vision-arc{
+    position:absolute;top:40px;right:-120px;width:400px;height:400px;
+    border:3px solid var(--accent);border-radius:50%;
+    opacity:.25;pointer-events:none;
+  }
+  .vision-headline{
+    max-width:900px;margin-bottom:80px;
+    opacity:0;transform:translateY(30px);
+  }
+  .vision-headline h2{
+    font-family:var(--font-sans);font-size:clamp(36px,5.5vw,80px);
+    font-weight:600;line-height:1.08;letter-spacing:-2px;
+  }
+  .vision-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+  }
+  .vision-card{
+    opacity:0;transform:translateY(30px);
+  }
+  .vision-card .num{
+    font-size:12px;font-weight:600;color:var(--accent);
+    margin-bottom:16px;letter-spacing:1px;
+  }
+  .vision-card h3{
+    font-size:20px;font-weight:600;margin-bottom:10px;letter-spacing:-.3px;
+  }
+  .vision-card p{
+    font-size:14px;line-height:1.6;color:var(--fg-light);
+  }
+  .vision-card .cn{font-family:var(--font-serif);font-size:13px;color:var(--fg-muted);margin-top:4px}
 
-  /* CTA */
-  .cta{position:relative;text-align:center;overflow:hidden;border-top:1px solid var(--hairline)}
-  .cta .orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
-  .cta .orb-1{width:380px;height:380px;background:var(--orb-mint);top:-20%;left:10%}
-  .cta .orb-2{width:340px;height:340px;background:var(--orb-peach);bottom:-20%;right:10%}
+  /* ===== CTA ===== */
+  .section-cta{
+    position:relative;background:var(--bg-dark);color:#fff;
+    padding:200px 40px 120px;overflow:hidden;text-align:center;
+  }
+  .cta-visual{
+    position:absolute;inset:0;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cta-visual canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.6}
+  .cta-content{position:relative;z-index:1}
+  .cta-content h2{
+    font-size:clamp(36px,6vw,80px);font-weight:600;
+    line-height:1.08;letter-spacing:-2px;margin-bottom:24px;
+  }
+  .cta-content p{
+    font-size:18px;color:rgba(255,255,255,.55);max-width:520px;
+    margin:0 auto 40px;line-height:1.6;
+  }
+  .cta-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:14px;font-weight:500;color:var(--fg);background:#fff;
+    padding:14px 32px;border-radius:9999px;text-decoration:none;
+    transition:transform .3s,opacity .3s;
+  }
+  .cta-btn:hover{transform:scale(1.04);opacity:.9}
 
-  /* FOOTER */
-  .footer{border-top:1px solid var(--hairline);padding:64px 0 48px}
-  .footer .sec-inner{display:flex;justify-content:space-between;align-items:flex-start}
-  .footer-brand{display:flex;flex-direction:column;gap:12px}
-  .footer-logo{font-size:17px;font-weight:500;color:var(--fg);letter-spacing:-0.02em}
-  .footer-tagline{font-family:var(--font-display);font-style:italic;font-size:13px;font-weight:300;color:var(--fg3);max-width:240px;line-height:1.5}
-  .footer-col{display:flex;flex-direction:column;gap:10px}
-  .footer-col-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--fg3)}
-  .footer-col a{font-size:14px;color:var(--fg2);text-decoration:none;transition:color .3s}
-  .footer-col a:hover{color:var(--fg)}
-  .footer-bottom{margin-top:48px;padding-top:20px;border-top:1px solid var(--hairline);display:flex;justify-content:space-between;align-items:center}
-  .footer-copy{font-size:12px;color:var(--fg3)}
-  .footer-socials{display:flex;gap:20px}
-  .footer-socials a{font-size:12px;color:var(--fg3);text-decoration:none;transition:color .3s}
-  .footer-socials a:hover{color:var(--fg)}
+  /* ===== FOOTER ===== */
+  .footer{
+    padding:60px 40px;border-top:1px solid var(--hairline);
+    display:flex;justify-content:space-between;align-items:flex-start;
+  }
+  .footer-left{font-size:13px;color:var(--fg-muted);line-height:1.8}
+  .footer-left a{color:var(--fg);text-decoration:none}
+  .footer-left a:hover{text-decoration:underline}
+  .footer-right{display:flex;gap:24px}
+  .footer-right a{font-size:13px;color:var(--fg-muted);text-decoration:none;transition:color .3s}
+  .footer-right a:hover{color:var(--fg)}
 
-  /* REVEAL */
-  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s cubic-bezier(.25,.46,.45,.94)}
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
   .reveal.visible{opacity:1;transform:translateY(0)}
-  .reveal-d1{transition-delay:.08s}.reveal-d2{transition-delay:.16s}.reveal-d3{transition-delay:.24s}
 
-  @media(max-width:768px){
-    .nav{padding:0 24px}.nav-links .hide-mb{display:none}
-    .hero-content,.sec-inner{padding:0 24px}
-    .hero{padding-bottom:72px;justify-content:flex-end}
-    .hero h1{font-size:clamp(32px,8vw,52px)}
-    .hero-scroll{bottom:24px}
-    .vision .sec-inner{grid-template-columns:1fr;gap:40px}
-    .vision-visual{aspect-ratio:16/10}
-    .research-item{gap:24px}.research-item:hover{padding-left:0}
-    .footer .sec-inner{flex-direction:column;gap:32px}
-    .footer-bottom{flex-direction:column;gap:12px;align-items:flex-start}
-    .hero-actions{flex-direction:column;width:100%}
-    .hero-actions a{width:100%;justify-content:center}
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:900px){
+    .hero{padding:100px 24px 32px}
+    .section-ideas,.section-work,.section-vision,.section-cta{padding:100px 24px}
+    .ideas-body{grid-template-columns:1fr;gap:40px}
+    .work-grid{grid-template-columns:1fr}
+    .vision-grid{grid-template-columns:repeat(2,1fr);gap:24px}
+    .footer{flex-direction:column;gap:24px}
+    .nav{padding:20px 24px}
+    .nav-menu{display:none}
+  }
+  @media(max-width:600px){
+    .work-header{flex-direction:column;gap:16px}
+    .vision-grid{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
 
-<div class="noise"></div>
-
 <!-- NAV -->
 <nav class="nav">
-  <a href="#" class="nav-brand">Embora</a>
-  <ul class="nav-links">
-    <li class="hide-mb"><a href="#vision">Vision</a></li>
-    <li class="hide-mb"><a href="#research">Research</a></li>
-    <li class="hide-mb"><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contact" class="nav-cta">Contact</a></li>
-  </ul>
+  <a href="#" class="nav-brand">EMBORA</a>
+  <div class="nav-right">
+    <a href="#contact" class="nav-btn">联系我们</a>
+    <button class="nav-menu" onclick="alert('菜单功能即将上线')">菜单</button>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
-  <div class="hero-content">
-    <div class="hero-brand">
-      <div class="dot"></div><span>Embodied Intelligence</span>
+  <div class="hero-headline">
+    <h1>We build embodied intelligence<br>that perceives, thinks & acts</h1>
+    <p class="cn">构建感知、思考与行动的具身智能</p>
+  </div>
+  <div class="hero-visual" id="heroCanvasContainer">
+    <canvas id="heroCanvas"></canvas>
+  </div>
+  <div class="hero-scroll">
+    <span class="plus"></span>
+    <span class="plus"></span>
+    <span>Scroll to explore</span>
+    <span class="plus"></span>
+    <span class="plus"></span>
+  </div>
+</section>
+
+<!-- BOLD IDEAS -->
+<section class="section-ideas" id="vision">
+  <div class="arc-decoration"></div>
+  <div class="hero-headline ideas-headline reveal">
+    <h2>Bold Ideas,<br>Brought to Life</h2>
+    <p class="cn">大胆构想，赋予生命</p>
+  </div>
+  <div class="ideas-body">
+    <div class="ideas-visual reveal">
+      <div class="ideas-visual-inner">
+        <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="400" y2="400">
+              <stop offset="0%" stop-color="#c8966a" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#c8966a" stop-opacity="0.1"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="200" r="150" stroke="url(#g1)" stroke-width="1.5"/>
+          <circle cx="200" cy="200" r="120" stroke="url(#g1)" stroke-width="1" opacity="0.5"/>
+          <circle cx="200" cy="200" r="90" stroke="url(#g1)" stroke-width="0.5" opacity="0.3"/>
+          <circle cx="200" cy="200" r="60" fill="url(#g1)" opacity="0.15"/>
+          <path d="M200 50 L200 350 M50 200 L350 200" stroke="url(#g1)" stroke-width="0.5" opacity="0.4"/>
+          <circle cx="200" cy="110" r="6" fill="#c8966a" opacity="0.8"/>
+          <circle cx="290" cy="200" r="6" fill="#c8966a" opacity="0.8"/>
+          <circle cx="200" cy="290" r="6" fill="#c8966a" opacity="0.8"/>
+          <circle cx="110" cy="200" r="6" fill="#c8966a" opacity="0.8"/>
+          <circle cx="263" cy="137" r="4" fill="#c8966a" opacity="0.5"/>
+          <circle cx="263" cy="263" r="4" fill="#c8966a" opacity="0.5"/>
+          <circle cx="137" cy="263" r="4" fill="#c8966a" opacity="0.5"/>
+          <circle cx="137" cy="137" r="4" fill="#c8966a" opacity="0.5"/>
+        </svg>
+      </div>
     </div>
-    <h1>Intelligence that<br><em>understands</em> the real world</h1>
-    <p>We build AI systems that perceive, reason, and act in physical reality — bridging the gap between artificial minds and the world we live in.</p>
-    <p class="cn">Embora 构建理解物理世界的具身智能，让机器在真实环境中感知、思考与行动。</p>
-    <div class="hero-actions">
-      <a href="#vision" class="btn-primary">Learn More</a>
-      <a href="#contact" class="btn-outline">Join Us</a>
+    <div class="ideas-text reveal">
+      <p>We combine perception, cognition, and action to create AI systems that understand and interact with the physical world. From robotic foundations to human-centered interfaces, we build intelligence that lives in reality.</p>
+      <p style="font-family:var(--font-serif);color:var(--fg-muted);">融合感知、认知与行动，打造理解物理世界、与现实交互的人工智能系统。</p>
+      <a href="#work" class="pill-btn"><span class="dot"></span>研究方向</a>
     </div>
   </div>
-  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- FEATURED WORK / RESEARCH -->
+<section class="section-work" id="work">
+  <div class="work-header reveal">
+    <h2>Research Focus</h2>
+    <p>A selection of our core research directions in embodied intelligence and physical-world AI.</p>
+  </div>
+  <div class="work-grid">
+    <a class="work-item reveal" href="#">
+      <div class="work-thumb" style="background:linear-gradient(135deg,#1a1a2e,#16213e)">
+        <svg viewBox="0 0 320 200" style="width:100%;height:100%">
+          <defs><linearGradient id="p1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c8966a" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8966a" stop-opacity="0.05"/></linearGradient></defs>
+          <rect x="30" y="40" width="260" height="120" rx="12" fill="url(#p1)" stroke="#c8966a" stroke-opacity="0.2" stroke-width="1"/>
+          <circle cx="80" cy="90" r="20" fill="#c8966a" opacity="0.25"/>
+          <circle cx="160" cy="110" r="28" fill="#c8966a" opacity="0.15"/>
+          <circle cx="230" cy="80" r="16" fill="#c8966a" opacity="0.2"/>
+          <path d="M80 90 Q120 60 160 110 Q200 150 230 80" stroke="#c8966a" stroke-opacity="0.4" fill="none" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <div class="work-tags">Perception • Multi-modal • Vision</div>
+        <div class="work-title">多模态感知系统</div>
+      </div>
+    </a>
+    <a class="work-item reveal" href="#">
+      <div class="work-thumb" style="background:linear-gradient(135deg,#0f0f23,#1a1a3e)">
+        <svg viewBox="0 0 320 200" style="width:100%;height:100%">
+          <defs><linearGradient id="p2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c8966a" stop-opacity="0.2"/><stop offset="100%" stop-color="#c8966a" stop-opacity="0.05"/></linearGradient></defs>
+          <rect x="50" y="50" width="80" height="80" rx="8" fill="url(#p2)" stroke="#c8966a" stroke-opacity="0.15"/>
+          <rect x="90" y="90" width="80" height="80" rx="8" fill="url(#p2)" stroke="#c8966a" stroke-opacity="0.15"/>
+          <rect x="130" y="70" width="80" height="80" rx="8" fill="url(#p2)" stroke="#c8966a" stroke-opacity="0.15"/>
+          <circle cx="160" cy="100" r="4" fill="#c8966a" opacity="0.5"/>
+          <path d="M90 130 L210 70" stroke="#c8966a" stroke-opacity="0.25" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <div class="work-tags">Cognition • Reasoning • Planning</div>
+        <div class="work-title">认知与推理引擎</div>
+      </div>
+    </a>
+    <a class="work-item reveal" href="#">
+      <div class="work-thumb" style="background:linear-gradient(135deg,#1a1025,#2d1b4e)">
+        <svg viewBox="0 0 320 200" style="width:100%;height:100%">
+          <defs><linearGradient id="p3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c8966a" stop-opacity="0.25"/><stop offset="100%" stop-color="#c8966a" stop-opacity="0.05"/></linearGradient></defs>
+          <circle cx="160" cy="100" r="60" fill="none" stroke="#c8966a" stroke-opacity="0.15" stroke-width="1"/>
+          <circle cx="160" cy="100" r="40" fill="none" stroke="#c8966a" stroke-opacity="0.2" stroke-width="1"/>
+          <circle cx="160" cy="100" r="20" fill="url(#p3)"/>
+          <circle cx="160" cy="40" r="6" fill="#c8966a" opacity="0.5"/>
+          <circle cx="220" cy="100" r="6" fill="#c8966a" opacity="0.5"/>
+          <circle cx="160" cy="160" r="6" fill="#c8966a" opacity="0.5"/>
+          <circle cx="100" cy="100" r="6" fill="#c8966a" opacity="0.5"/>
+          <path d="M160 46 L160 94 M166 100 L214 100 M160 106 L160 154 M154 100 L106 100" stroke="#c8966a" stroke-opacity="0.3" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <div class="work-tags">Action • Robotics • Control</div>
+        <div class="work-title">行动与控制系统</div>
+      </div>
+    </a>
+    <a class="work-item reveal" href="#">
+      <div class="work-thumb" style="background:linear-gradient(135deg,#0d1f1c,#1a3a34)">
+        <svg viewBox="0 0 320 200" style="width:100%;height:100%">
+          <defs><linearGradient id="p4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c8966a" stop-opacity="0.2"/><stop offset="100%" stop-color="#c8966a" stop-opacity="0.05"/></linearGradient></defs>
+          <rect x="40" y="60" width="240" height="80" rx="12" fill="url(#p4)" stroke="#c8966a" stroke-opacity="0.15"/>
+          <circle cx="80" cy="100" r="12" fill="#c8966a" opacity="0.25"/>
+          <circle cx="140" cy="100" r="12" fill="#c8966a" opacity="0.2"/>
+          <circle cx="200" cy="100" r="12" fill="#c8966a" opacity="0.15"/>
+          <circle cx="260" cy="100" r="12" fill="#c8966a" opacity="0.1"/>
+          <path d="M80 100 L260 100" stroke="#c8966a" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="80" cy="100" r="3" fill="#c8966a" opacity="0.7"/>
+          <circle cx="140" cy="100" r="3" fill="#c8966a" opacity="0.7"/>
+          <circle cx="200" cy="100" r="3" fill="#c8966a" opacity="0.7"/>
+          <circle cx="260" cy="100" r="3" fill="#c8966a" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <div class="work-tags">Evolution • Learning • Adaptation</div>
+        <div class="work-title">进化与持续学习</div>
+      </div>
+    </a>
+  </div>
 </section>
 
 <!-- VISION -->
-<section class="section vision" id="vision">
-  <div class="sec-inner">
-    <div class="reveal">
-      <p class="sec-label">Our Vision · 我们的愿景</p>
-      <h2 class="sec-title">From digital minds to <em>physical presence</em></h2>
-      <p class="sec-body">The next leap in AI isn't about better language models or bigger datasets. It's about giving intelligence a body — the ability to touch, move, and interact with the physical world the way humans do.</p>
-      <p class="sec-body-cn">AI 的下一步飞跃不是更好的语言模型，而是赋予智能一个"身体"——让它能够触摸、移动、与物理世界互动。</p>
-    </div>
-    <div class="vision-visual reveal reveal-d2">
-      <div><h3>Embora.ai</h3><p class="sub">COMING SOON</p></div>
-    </div>
+<section class="section-vision">
+  <div class="vision-arc"></div>
+  <div class="vision-headline reveal">
+    <h2>Where Machine Intelligence<br>Meets Physical Reality</h2>
+    <p class="cn" style="font-family:var(--font-serif);font-size:clamp(18px,2vw,28px);color:var(--fg-light);margin-top:16px">机器智能与物理现实的交汇点</p>
   </div>
-</section>
-
-<!-- RESEARCH -->
-<section class="section research" id="research">
-  <div class="sec-inner">
-    <div class="reveal" style="margin-bottom:56px">
-      <p class="sec-label">Core Research · 核心研究</p>
-      <h2 class="sec-title">Three pillars of <em>embodied intelligence</em></h2>
+  <div class="vision-grid">
+    <div class="vision-card reveal">
+      <div class="num">01</div>
+      <h3>感知 Perception</h3>
+      <p>Multi-modal sensing systems that see, hear, touch, and understand spatial relationships in real time.</p>
+      <p class="cn">多模态传感系统，实时感知视觉、听觉、触觉与空间关系。</p>
     </div>
-    <ul class="research-list">
-      <li class="research-item reveal reveal-d1">
-        <span class="research-num">01</span>
-        <div class="research-body">
-          <h3>Perception</h3>
-          <p class="cn">感知</p>
-          <p>Multi-modal sensing systems that enable machines to see, hear, and feel their environment with human-level fidelity. 多模态感知系统，让机器以人类精度观察、聆听和感知周围环境。</p>
-        </div>
-      </li>
-      <li class="research-item reveal reveal-d2">
-        <span class="research-num">02</span>
-        <div class="research-body">
-          <h3>Cognition</h3>
-          <p class="cn">认知</p>
-          <p>Reasoning engines that understand physics, spatial relationships, and causal logic to make intelligent decisions. 推理引擎，理解物理规律、空间关系和因果逻辑，做出智能决策。</p>
-        </div>
-      </li>
-      <li class="research-item reveal reveal-d3">
-        <span class="research-num">03</span>
-        <div class="research-body">
-          <h3>Action</h3>
-          <p class="cn">行动</p>
-          <p>Execution systems that translate intelligence into precise physical interaction and manipulation. 将智能转化为精准物理交互和操作的执行系统。</p>
-        </div>
-      </li>
-    </ul>
-  </div>
-</section>
-
-<!-- ROADMAP -->
-<section class="section roadmap" id="roadmap">
-  <div class="sec-inner">
-    <div class="reveal" style="text-align:center;margin-bottom:64px">
-      <p class="sec-label">Roadmap · 发展路线</p>
-      <h2 class="sec-title">From foundation to <em>reality</em></h2>
+    <div class="vision-card reveal">
+      <div class="num">02</div>
+      <h3>认知 Cognition</h3>
+      <p>Neural architectures for reasoning, planning, and decision-making in dynamic, uncertain environments.</p>
+      <p class="cn">面向动态不确定环境的推理、规划与决策神经架构。</p>
     </div>
-    <div class="timeline">
-      <div class="timeline-item reveal">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <p class="timeline-phase">Phase 01 · 2026</p>
-          <h3>Foundation Research</h3>
-          <p class="cn">基础研究阶段</p>
-          <p>Establish core research in multi-modal perception and world models. Build the founding team. 开展多模态感知与世界模型的核心研究，组建创始团队。</p>
-        </div>
-      </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <p class="timeline-phase">Phase 02 · 2027</p>
-          <h3>Proto-Agent</h3>
-          <p class="cn">原型智能体</p>
-          <p>Develop the first embodied AI agent capable of navigating and interacting within controlled environments. 开发首个能在受控环境中导航和交互的具身 AI 智能体。</p>
-        </div>
-      </div>
-      <div class="timeline-item reveal">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <p class="timeline-phase">Phase 03 · 2028</p>
-          <h3>Real-World Deployment</h3>
-          <p class="cn">真实世界部署</p>
-          <p>Deploy agents in real-world scenarios — from smart manufacturing to assistive robotics. 将具身智能体部署到真实场景——从智能制造到辅助机器人。</p>
-        </div>
-      </div>
-      <div class="timeline-item future reveal">
-        <div class="timeline-dot"></div>
-        <div class="timeline-content">
-          <p class="timeline-phase">Phase 04 · Beyond</p>
-          <h3>General Embodied Intelligence</h3>
-          <p class="cn">通用具身智能</p>
-          <p>Pursue general-purpose embodied AI that learns and adapts across any physical task, in any environment. 追求能在任何物理任务和环境中学习与适应的通用具身智能。</p>
-        </div>
-      </div>
+    <div class="vision-card reveal">
+      <div class="num">03</div>
+      <h3>行动 Action</h3>
+      <p>Closed-loop control systems that translate high-level intent into precise physical motion.</p>
+      <p class="cn">将高层意图转化为精确物理运动的闭环控制系统。</p>
+    </div>
+    <div class="vision-card reveal">
+      <div class="num">04</div>
+      <h3>进化 Evolution</h3>
+      <p>Self-improving agents that learn from every interaction and adapt to new tasks autonomously.</p>
+      <p class="cn">从每次交互中学习、自主适应新任务的自进化智能体。</p>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="section cta" id="contact">
-  <div class="orb orb-1"></div><div class="orb orb-2"></div>
-  <div class="sec-inner reveal" style="text-align:center;position:relative;z-index:1">
-    <p class="sec-label">Get Involved · 加入我们</p>
-    <h2 class="sec-title">Let's build the<br><em>physical future</em> of AI</h2>
-    <p class="sec-body" style="margin:0 auto 40px;max-width:480px">
-      We're looking for researchers, engineers, and dreamers who believe intelligence should live beyond the screen.<br>
-      我们正在寻找相信智能应当超越屏幕的研究者、工程师和梦想家。
-    </p>
-    <div class="hero-actions" style="justify-content:center">
-      <a href="mailto:hello@embora.ai" class="btn-primary">Contact Us</a>
-      <a href="#" class="btn-outline">View Careers</a>
-    </div>
+<section class="section-cta" id="contact">
+  <div class="cta-visual">
+    <canvas id="ctaCanvas"></canvas>
+  </div>
+  <div class="cta-content reveal">
+    <h2>Step Into a New World<br>And Build the Future</h2>
+    <p>具身智能的下一个纪元，从这里开始。<br>欢迎联系我们，共同探索。</p>
+    <a href="mailto:hello@embora.ai" class="cta-btn">hello@embora.ai</a>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="sec-inner">
-    <div class="footer-brand">
-      <span class="footer-logo">Embora</span>
-      <span class="footer-tagline">Embodied Intelligence for the Real World. 构建理解物理世界的具身智能。</span>
-    </div>
-    <div style="display:flex;gap:56px">
-      <div class="footer-col">
-        <span class="footer-col-title">Company</span>
-        <a href="#vision">About</a><a href="#roadmap">Roadmap</a><a href="#">Careers</a><a href="#">Blog</a>
-      </div>
-      <div class="footer-col">
-        <span class="footer-col-title">Research</span>
-        <a href="#research">Perception</a><a href="#research">Cognition</a><a href="#research">Action</a><a href="#">Publications</a>
-      </div>
-    </div>
+  <div class="footer-left">
+    <strong style="color:var(--fg);font-size:15px">Embora</strong><br>
+    Embodied Intelligence Lab<br>
+    <a href="mailto:hello@embora.ai">hello@embora.ai</a>
   </div>
-  <div class="sec-inner footer-bottom">
-    <span class="footer-copy">&copy; 2026 Embora. All rights reserved.</span>
-    <div class="footer-socials">
-      <a href="#">Twitter</a><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">WeChat</a>
-    </div>
+  <div class="footer-right">
+    <a href="#">Twitter / X</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">GitHub</a>
   </div>
 </footer>
 
 <script>
-const observer=new IntersectionObserver((e)=>{e.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:0.12,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.reveal').forEach(e=>observer.observe(e));
+/* ===== HERO CANVAS: Floating Particles ===== */
+(function(){
+  const canvas=document.getElementById('heroCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[],mouse={x:W/2,y:H/2};
+  function resize(){W=canvas.width=canvas.parentElement.offsetWidth;H=canvas.height=canvas.parentElement.offsetHeight}
+  resize();window.addEventListener('resize',resize);
+  canvas.parentElement.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
+
+  const COUNT=60;
+  for(let i=0;i<COUNT;i++){
+    particles.push({
+      x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*3+1,
+      vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
+      alpha:Math.random()*.5+.1,
+      color:Math.random()>.5?'#c8966a':'#a0a0b0'
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach((p,i)=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;
+      if(p.y<0||p.y>H)p.vy*=-1;
+      const dx=mouse.x-p.x,dy=mouse.y-p.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<150){p.x+=dx/dist*.3;p.y+=dy/dist*.3}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.globalAlpha=p.alpha;ctx.fill();
+      for(let j=i+1;j<particles.length;j++){
+        const p2=particles[j],d=Math.hypot(p.x-p2.x,p.y-p2.y);
+        if(d<120){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p2.x,p2.y);ctx.strokeStyle=p.color;ctx.globalAlpha=.08*(1-d/120);ctx.lineWidth=.5;ctx.stroke()}
+      }
+    });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ===== CTA CANVAS: Starfield ===== */
+(function(){
+  const canvas=document.getElementById('ctaCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=canvas.width=canvas.parentElement.offsetWidth;H=canvas.height=canvas.parentElement.offsetHeight}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<120;i++){
+    stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,alpha:Math.random()*.6+.1,vy:Math.random()*.2+.05});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{s.y+=s.vy;if(s.y>H)s.y=0;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle='#fff';ctx.globalAlpha=s.alpha;ctx.fill()});
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ===== SCROLL REVEAL ===== */
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+},{threshold:.15});
+reveals.forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
